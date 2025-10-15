@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Paciente extends Model
 {
@@ -37,5 +38,13 @@ class Paciente extends Model
         return new Attribute(
             get: fn () => "{$this->primer_nombre} {$this->segundo_nombre} {$this->primer_apellido} {$this->segundo_apellido}",
         );
+    }
+
+    /**
+     * Define la relación "uno a uno" con HistoriaClinica.
+     */
+    public function historiaClinica(): HasOne
+    {
+        return $this->hasOne(HistoriaClinica::class);
     }
 }
