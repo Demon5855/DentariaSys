@@ -20,25 +20,19 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    // Rutas del Perfil (instaladas por Breeze)
+    // Rutas de Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // --- HISTORIAS CLÍNICAS ---
+    // Rutas de Historias Clínicas
     Route::get('pacientes/{paciente}/historia/crear', [HistoriaClinicaController::class, 'create'])->name('historias.create');
     Route::post('pacientes/{paciente}/historia', [HistoriaClinicaController::class, 'store'])->name('historias.store');
     Route::get('historias/{historiaClinica}', [HistoriaClinicaController::class, 'show'])->name('historias.show');
-    // --------------------------------------------------
 
-    // --- PACIENTES ---
+    // Rutas de Pacientes
     Route::patch('pacientes/{paciente}/restore', [PacienteController::class, 'restore'])->name('pacientes.restore');
     Route::resource('pacientes', PacienteController::class);
-    // --------------------------------------------------
-
-
-
 });
 
-// Esta línea la añade Breeze y AHORA SÍ FUNCIONARÁ
 require __DIR__.'/auth.php';
