@@ -10,18 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('historias_clinicas', function (Blueprint $table) {
-            $table->id();
-
-            // Clave foránea para relacionar con la tabla pacientes
-            $table->foreignId('paciente_id')->unique()->constrained('pacientes')->onDelete('cascade');
-
-            $table->date('fecha_apertura');
-            $table->text('antecedentes_personales')->nullable();
-            $table->text('antecedentes_familiares')->nullable();
-            $table->text('examen_clinico_general')->nullable();
-            // Puedes añadir más campos generales aquí si lo necesitas
-
+        Schema::create('historia_clinicas', function (Blueprint $table) {
+            $table->id('hcl_id');
+            $table->unsignedBigInteger('hcl_pac_id')->unique();
+            $table->foreign('hcl_pac_id')->references('pac_id')->on('pacientes')->onDelete('cascade');
+            $table->date('hcl_fecha_apertura');
+            $table->text('hcl_antecedentes_personales')->nullable();
+            $table->text('hcl_antecedentes_familiares')->nullable();
+            $table->text('hcl_examen_clinico_general')->nullable();
             $table->timestamps();
         });
     }

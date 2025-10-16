@@ -4,30 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo; // <-- Importa la clase
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HistoriaClinica extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $primaryKey = 'hcl_id';
+
     protected $fillable = [
-        'paciente_id',
-        'fecha_apertura',
-        'antecedentes_personales',
-        'antecedentes_familiares',
-        'examen_clinico_general',
+        'hcl_pac_id',
+        'hcl_fecha_apertura',
+        'hcl_antecedentes_personales',
+        'hcl_antecedentes_familiares',
+        'hcl_examen_clinico_general',
     ];
 
-    /**
-     * Define la relación inversa "pertenece a" con Paciente.
-     */
     public function paciente(): BelongsTo
     {
-        return $this->belongsTo(Paciente::class);
+        return $this->belongsTo(Paciente::class, 'hcl_pac_id', 'pac_id');
     }
 }

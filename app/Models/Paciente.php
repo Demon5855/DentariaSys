@@ -11,40 +11,29 @@ class Paciente extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $primaryKey = 'pac_id';
+
     protected $fillable = [
-        'primer_nombre',
-        'segundo_nombre',
-        'primer_apellido',
-        'segundo_apellido',
-        'fecha_nacimiento',
-        'telefono',
-        'direccion',
-        'email',
-        'activo', // Añadimos 'activo' para poder desactivar pacientes
+        'pac_primer_nombre',
+        'pac_segundo_nombre',
+        'pac_primer_apellido',
+        'pac_segundo_apellido',
+        'pac_fecha_nacimiento',
+        'pac_telefono',
+        'pac_direccion',
+        'pac_email',
+        'pac_activo',
     ];
 
-    /**
-     * Interact with the user's first name.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
     protected function nombreCompleto(): Attribute
     {
         return new Attribute(
-            get: fn () => "{$this->primer_nombre} {$this->segundo_nombre} {$this->primer_apellido} {$this->segundo_apellido}",
+            get: fn () => trim("{$this->pac_primer_nombre} {$this->pac_segundo_nombre} {$this->pac_primer_apellido} {$this->pac_segundo_apellido}"),
         );
     }
 
-    /**
-     * Define la relación "uno a uno" con HistoriaClinica.
-     */
     public function historiaClinica(): HasOne
     {
-        return $this->hasOne(HistoriaClinica::class);
+        return $this->hasOne(HistoriaClinica::class, 'hcl_pac_id', 'pac_id');
     }
 }

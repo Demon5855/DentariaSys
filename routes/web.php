@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PacienteController;
+use App\Http\Controllers\HistoriaClinicaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,11 +25,19 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // --- HISTORIAS CLÍNICAS ---
+    Route::get('pacientes/{paciente}/historia/crear', [HistoriaClinicaController::class, 'create'])->name('historias.create');
+    Route::post('pacientes/{paciente}/historia', [HistoriaClinicaController::class, 'store'])->name('historias.store');
+    Route::get('historias/{historiaClinica}', [HistoriaClinicaController::class, 'show'])->name('historias.show');
+    // --------------------------------------------------
+
+    // --- PACIENTES ---
     Route::patch('pacientes/{paciente}/restore', [PacienteController::class, 'restore'])->name('pacientes.restore');
-
-
-    // Tus Rutas de Pacientes
     Route::resource('pacientes', PacienteController::class);
+    // --------------------------------------------------
+
+
+
 });
 
 // Esta línea la añade Breeze y AHORA SÍ FUNCIONARÁ

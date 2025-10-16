@@ -11,17 +11,17 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('pacientes', function (Blueprint $table) {
-            $table->id();
-            $table->string('primer_nombre');
-            $table->string('segundo_nombre')->nullable(); // nullable significa que puede estar vacío
-            $table->string('primer_apellido');
-            $table->string('segundo_apellido')->nullable();
-            $table->date('fecha_nacimiento');
-            $table->string('telefono', 15)->nullable();
-            $table->string('direccion')->nullable();
-            $table->string('email')->unique()->nullable(); // unique para que no se repitan los correos
-            $table->boolean('activo')->default(true);
-            $table->timestamps(); // Crea las columnas created_at y updated_at
+            $table->id('pac_id');
+            $table->string('pac_primer_nombre');
+            $table->string('pac_segundo_nombre')->nullable();
+            $table->string('pac_primer_apellido');
+            $table->string('pac_segundo_apellido')->nullable();
+            $table->date('pac_fecha_nacimiento');
+            $table->string('pac_telefono', 15)->nullable();
+            $table->string('pac_direccion')->nullable();
+            $table->string('pac_email')->unique()->nullable();
+            $table->boolean('pac_activo')->default(true);
+            $table->timestamps();
         });
     }
 

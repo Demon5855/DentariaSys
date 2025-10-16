@@ -16,45 +16,45 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             
                             <div>
-                                <x-input-label for="primer_nombre" :value="__('Primer Nombre')" />
-                                <x-text-input id="primer_nombre" class="block mt-1 w-full" type="text" name="primer_nombre" :value="old('primer_nombre', $paciente->primer_nombre)" required autofocus />
-                                <x-input-error :messages="$errors->get('primer_nombre')" class="mt-2" />
+                                <x-input-label for="pac_primer_nombre" :value="__('Primer Nombre')" />
+                                <x-text-input id="pac_primer_nombre" class="block mt-1 w-full" type="text" name="pac_primer_nombre" :value="old('pac_primer_nombre', $paciente->pac_primer_nombre)" required autofocus />
+                                <x-input-error :messages="$errors->get('pac_primer_nombre')" class="mt-2" />
                             </div>
                             <div>
-                                <x-input-label for="segundo_nombre" :value="__('Segundo Nombre (Opcional)')" />
-                                <x-text-input id="segundo_nombre" class="block mt-1 w-full" type="text" name="segundo_nombre" :value="old('segundo_nombre', $paciente->segundo_nombre)" />
-                                <x-input-error :messages="$errors->get('segundo_nombre')" class="mt-2" />
+                                <x-input-label for="pac_segundo_nombre" :value="__('Segundo Nombre (Opcional)')" />
+                                <x-text-input id="pac_segundo_nombre" class="block mt-1 w-full" type="text" name="pac_segundo_nombre" :value="old('pac_segundo_nombre', $paciente->pac_segundo_nombre)" />
+                                <x-input-error :messages="$errors->get('pac_segundo_nombre')" class="mt-2" />
                             </div>
                             <div>
-                                <x-input-label for="primer_apellido" :value="__('Primer Apellido')" />
-                                <x-text-input id="primer_apellido" class="block mt-1 w-full" type="text" name="primer_apellido" :value="old('primer_apellido', $paciente->primer_apellido)" required />
-                                <x-input-error :messages="$errors->get('primer_apellido')" class="mt-2" />
+                                <x-input-label for="pac_primer_apellido" :value="__('Primer Apellido')" />
+                                <x-text-input id="pac_primer_apellido" class="block mt-1 w-full" type="text" name="pac_primer_apellido" :value="old('pac_primer_apellido', $paciente->pac_primer_apellido)" required />
+                                <x-input-error :messages="$errors->get('pac_primer_apellido')" class="mt-2" />
                             </div>
                             <div>
-                                <x-input-label for="segundo_apellido" :value="__('Segundo Apellido (Opcional)')" />
-                                <x-text-input id="segundo_apellido" class="block mt-1 w-full" type="text" name="segundo_apellido" :value="old('segundo_apellido', $paciente->segundo_apellido)" />
-                                <x-input-error :messages="$errors->get('segundo_apellido')" class="mt-2" />
+                                <x-input-label for="pac_segundo_apellido" :value="__('Segundo Apellido (Opcional)')" />
+                                <x-text-input id="pac_segundo_apellido" class="block mt-1 w-full" type="text" name="pac_segundo_apellido" :value="old('pac_segundo_apellido', $paciente->pac_segundo_apellido)" />
+                                <x-input-error :messages="$errors->get('pac_segundo_apellido')" class="mt-2" />
                             </div>
                             
                             <div>
-                                <x-input-label for="fecha_nacimiento" :value="__('Fecha de Nacimiento')" />
-                                <x-text-input id="fecha_nacimiento" class="block mt-1 w-full" type="date" name="fecha_nacimiento" :value="old('fecha_nacimiento', $paciente->fecha_nacimiento)" required />
-                                <x-input-error :messages="$errors->get('fecha_nacimiento')" class="mt-2" />
+                                <x-input-label for="pac_fecha_nacimiento" :value="__('Fecha de Nacimiento')" />
+                                <x-text-input id="pac_fecha_nacimiento" class="block mt-1 w-full" type="date" name="pac_fecha_nacimiento" :value="old('pac_fecha_nacimiento', $paciente->pac_fecha_nacimiento)" required />
+                                <x-input-error :messages="$errors->get('pac_fecha_nacimiento')" class="mt-2" />
                             </div>
                              <div>
-                                <x-input-label for="telefono" :value="__('Teléfono (Opcional)')" />
-                                <x-text-input id="telefono" class="block mt-1 w-full" type="text" name="telefono" :value="old('telefono', $paciente->telefono)" />
-                                <x-input-error :messages="$errors->get('telefono')" class="mt-2" />
+                                <x-input-label for="pac_telefono" :value="__('Teléfono (Opcional)')" />
+                                <x-text-input id="pac_telefono" class="block mt-1 w-full" type="text" name="pac_telefono" :value="old('pac_telefono', $paciente->pac_telefono)" />
+                                <x-input-error :messages="$errors->get('pac_telefono')" class="mt-2" />
                             </div>
                              <div class="md:col-span-2">
-                                <x-input-label for="email" :value="__('Correo Electrónico (Opcional)')" />
-                                <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $paciente->email)" />
-                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                                <x-input-label for="pac_email" :value="__('Correo Electrónico (Opcional)')" />
+                                <x-text-input id="pac_email" class="block mt-1 w-full" type="email" name="pac_email" :value="old('pac_email', $paciente->pac_email)" />
+                                <x-input-error :messages="$errors->get('pac_email')" class="mt-2" />
                             </div>
                              <div class="md:col-span-2">
-                                <x-input-label for="direccion" :value="__('Dirección (Opcional)')" />
-                                <x-text-input id="direccion" class="block mt-1 w-full" type="text" name="direccion" :value="old('direccion', $paciente->direccion)" />
-                                <x-input-error :messages="$errors->get('direccion')" class="mt-2" />
+                                <x-input-label for="pac_direccion" :value="__('Dirección (Opcional)')" />
+                                <x-text-input id="pac_direccion" class="block mt-1 w-full" type="text" name="pac_direccion" :value="old('pac_direccion', $paciente->pac_direccion)" />
+                                <x-input-error :messages="$errors->get('pac_direccion')" class="mt-2" />
                             </div>
 
                         </div>
