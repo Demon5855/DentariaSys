@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Condicion;
 use App\Models\HistoriaClinica;
+use App\Models\SextanteIhos;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -62,6 +63,21 @@ class StoreOdontogramaRequest extends FormRequest
             'periodontal.*.pieza' => ['required', 'integer', "in:{$piezasPermanentes}"],
             'periodontal.*.movilidad' => ['nullable', 'integer', 'between:0,3'],
             'periodontal.*.recesion' => ['nullable', 'integer', 'between:0,4'],
+
+            // Sección I: índice de higiene oral simplificada. Un registro
+            // por sextante; pieza_examinada nulo = sextante marcado "—".
+            'ihos' => ['nullable', 'array', 'max:6'],
+            'ihos.*.sextante_id' => ['required', 'integer', 'exists:sextantes_ihos,id', 'distinct'],
+            'ihos.*.pieza_examinada' => ['nullable', 'integer', "in:{$piezasValidas}"],
+            'ihos.*.placa' => ['nullable', 'integer', 'between:0,3'],
+            'ihos.*.calculo' => ['nullable', 'integer', 'between:0,3'],
+            'ihos.*.gingivitis' => ['nullable', 'integer', 'between:0,1'],
+
+            // Resto de la sección I: registrar 'ninguna' cuando no hay
+            // patología, tal como el formulario pide "raya" si no aplica.
+            'enfermedad_periodontal' => ['nullable', 'in:ninguna,leve,moderada,avanzada'],
+            'tipo_oclusion' => ['nullable', 'in:I,II,III'],
+            'fluorosis' => ['nullable', 'in:ninguna,leve,moderada,severa'],
         ];
     }
 
@@ -111,6 +127,33 @@ class StoreOdontogramaRequest extends FormRequest
                     'tipo',
                     'Esta historia ya tiene un odontograma inicial. Registra este como evolutivo.'
                 );
+            }
+
+            $sextantesPorId = SextanteIhos::whereIn(
+                'id',
+                collect($this->input('ihos', []))->pluck('sextante_id')->filter()->unique()
+            )->get()->keyBy('id');
+
+            foreach ($this->input('ihos', []) as $indice => $registro) {
+                $sextante = $sextantesPorId->get($registro['sextante_id'] ?? null);
+                $piezaExaminada = $registro['pieza_examinada'] ?? null;
+
+                if (! $sextante || $piezaExaminada === null) {
+                    continue;
+                }
+
+                $candidatas = array_filter([
+                    $sextante->pieza_primaria,
+                    $sextante->pieza_alterna,
+                    $sextante->pieza_temporal,
+                ]);
+
+                if (! in_array((int) $piezaExaminada, $candidatas, true)) {
+                    $validator->errors()->add(
+                        "ihos.{$indice}.pieza_examinada",
+                        "La pieza {$piezaExaminada} no corresponde a ninguna de las candidatas de este sextante."
+                    );
+                }
             }
         });
     }

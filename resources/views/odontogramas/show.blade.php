@@ -112,6 +112,56 @@
                 </div>
             @endif
 
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                <p class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">Índice de higiene oral simplificada</p>
+
+                @if ($odontograma->ihosRegistros->whereNotNull('pieza_examinada')->isNotEmpty())
+                    <table class="text-sm mb-4 w-full">
+                        <thead>
+                            <tr class="text-left text-xs uppercase text-gray-500">
+                                <th class="pb-1 pr-4">Sextante</th>
+                                <th class="pb-1 pr-4">Pieza</th>
+                                <th class="pb-1 pr-4">Placa</th>
+                                <th class="pb-1 pr-4">Cálculo</th>
+                                <th class="pb-1 pr-4">Gingivitis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($odontograma->ihosRegistros as $registro)
+                                <tr class="border-t">
+                                    <td class="py-1 pr-4">{{ $registro->sextante->numero }}</td>
+                                    <td class="py-1 pr-4">{{ $registro->pieza_examinada ?? '— (no aplica)' }}</td>
+                                    <td class="py-1 pr-4">{{ $registro->placa ?? '—' }}</td>
+                                    <td class="py-1 pr-4">{{ $registro->calculo ?? '—' }}</td>
+                                    <td class="py-1 pr-4">{{ $registro->gingivitis ?? '—' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+
+                <div class="flex gap-6 flex-wrap text-sm mb-4">
+                    <div class="bg-gray-50 rounded px-3 py-2">
+                        <span class="text-gray-500 block text-xs">Promedio placa</span>
+                        <b>{{ $odontograma->ihos_placa_promedio ?? 'Sin registrar' }}</b>
+                    </div>
+                    <div class="bg-gray-50 rounded px-3 py-2">
+                        <span class="text-gray-500 block text-xs">Promedio cálculo</span>
+                        <b>{{ $odontograma->ihos_calculo_promedio ?? 'Sin registrar' }}</b>
+                    </div>
+                    <div class="bg-gray-50 rounded px-3 py-2">
+                        <span class="text-gray-500 block text-xs">Promedio gingivitis</span>
+                        <b>{{ $odontograma->ihos_gingivitis_promedio ?? 'Sin registrar' }}</b>
+                    </div>
+                </div>
+
+                <div class="flex gap-6 flex-wrap text-sm">
+                    <div><span class="text-gray-500 block text-xs">Enfermedad periodontal</span><b>{{ ucfirst($odontograma->enfermedad_periodontal ?? 'sin registrar') }}</b></div>
+                    <div><span class="text-gray-500 block text-xs">Tipo de oclusión</span><b>{{ $odontograma->tipo_oclusion ? 'Clase '.$odontograma->tipo_oclusion : 'Sin registrar' }}</b></div>
+                    <div><span class="text-gray-500 block text-xs">Fluorosis</span><b>{{ ucfirst($odontograma->fluorosis ?? 'sin registrar') }}</b></div>
+                </div>
+            </div>
+
             <div class="flex justify-end">
                 <a href="{{ route('historias.show', $odontograma->historiaClinica) }}"
                     class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-md">

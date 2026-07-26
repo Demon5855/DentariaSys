@@ -54,7 +54,7 @@
 
             <form action="{{ route('odontogramas.store', $historiaClinica) }}" method="POST"
                 @submit="prepararEnvio($el)"
-                x-data="odontogramaForm(@js($condiciones->keyBy('id')), '{{ $tipoSugerido }}')">
+                x-data="odontogramaForm(@js($condiciones->keyBy('id')), @js($sextantesIhos), '{{ $tipoSugerido }}')">
                 @csrf
 
                 <div class="odonto-lienzo" x-cloak>
@@ -210,7 +210,92 @@
                         </div>
                     </section>
 
-                    {{-- Aquí se insertan los inputs hallazgos[]/periodontal[] justo antes de enviar --}}
+                    <section class="odonto-tarjeta mt-4">
+                        <p class="odonto-rotulo">Índice de higiene oral simplificada (sección I)</p>
+                        <p class="text-xs text-gray-500 mb-3">
+                            Por cada sextante, indica qué pieza examinaste (si la primaria no está en boca,
+                            usa la alterna; si ninguna está presente, deja "No aplica" — no cuenta en el promedio).
+                        </p>
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm">
+                                <thead>
+                                    <tr class="text-left text-xs uppercase text-gray-500">
+                                        <th class="pb-2 pr-4">Sextante</th>
+                                        <th class="pb-2 pr-4">Pieza examinada</th>
+                                        <th class="pb-2 pr-4">Placa (0-3)</th>
+                                        <th class="pb-2 pr-4">Cálculo (0-3)</th>
+                                        <th class="pb-2 pr-4">Gingivitis (0-1)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($sextantesIhos as $sextante)
+                                        <tr class="border-t">
+                                            <td class="py-2 pr-4 font-medium">{{ $sextante->numero }}</td>
+                                            <td class="py-2 pr-4">
+                                                <select x-model="ihos[{{ $sextante->id }}].pieza"
+                                                    class="border-gray-300 rounded-md text-sm">
+                                                    <option value="">No aplica (—)</option>
+                                                    <option value="{{ $sextante->pieza_primaria }}">{{ $sextante->pieza_primaria }} (primaria)</option>
+                                                    <option value="{{ $sextante->pieza_alterna }}">{{ $sextante->pieza_alterna }} (alterna)</option>
+                                                    @if ($sextante->pieza_temporal)
+                                                        <option value="{{ $sextante->pieza_temporal }}">{{ $sextante->pieza_temporal }} (temporal)</option>
+                                                    @endif
+                                                </select>
+                                            </td>
+                                            <td class="py-2 pr-4">
+                                                <input type="number" min="0" max="3" x-model="ihos[{{ $sextante->id }}].placa"
+                                                    class="w-16 border-gray-300 rounded-md text-sm" :disabled="!ihos[{{ $sextante->id }}].pieza">
+                                            </td>
+                                            <td class="py-2 pr-4">
+                                                <input type="number" min="0" max="3" x-model="ihos[{{ $sextante->id }}].calculo"
+                                                    class="w-16 border-gray-300 rounded-md text-sm" :disabled="!ihos[{{ $sextante->id }}].pieza">
+                                            </td>
+                                            <td class="py-2 pr-4">
+                                                <input type="number" min="0" max="1" x-model="ihos[{{ $sextante->id }}].gingivitis"
+                                                    class="w-16 border-gray-300 rounded-md text-sm" :disabled="!ihos[{{ $sextante->id }}].pieza">
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="odonto-tarjeta mt-4">
+                        <p class="odonto-rotulo">Resto de la sección I</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <x-input-label value="Enfermedad periodontal" />
+                                <select name="enfermedad_periodontal" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                                    <option value="ninguna">Ninguna</option>
+                                    <option value="leve">Leve</option>
+                                    <option value="moderada">Moderada</option>
+                                    <option value="avanzada">Avanzada</option>
+                                </select>
+                            </div>
+                            <div>
+                                <x-input-label value="Tipo de oclusión (Angle)" />
+                                <select name="tipo_oclusion" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                                    <option value="">Sin registrar</option>
+                                    <option value="I">Clase I (neutroclusión)</option>
+                                    <option value="II">Clase II (distoclusión)</option>
+                                    <option value="III">Clase III (mesioclusión)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <x-input-label value="Fluorosis (Dean)" />
+                                <select name="fluorosis" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                                    <option value="ninguna">Ninguna</option>
+                                    <option value="leve">Leve</option>
+                                    <option value="moderada">Moderada</option>
+                                    <option value="severa">Severa</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+
+                    {{-- Aquí se insertan los inputs hallazgos[]/periodontal[]/ihos[] justo antes de enviar --}}
                     <div id="odonto-campos-dinamicos"></div>
                 </div>
             </form>
@@ -218,11 +303,17 @@
     </div>
 
     <script>
-    function odontogramaForm(condicionesIniciales, tipoSugerido) {
+    function odontogramaForm(condicionesIniciales, sextantesIhos, tipoSugerido) {
         const LADO = 34, BORDE = LADO * 0.30;
+
+        const ihosInicial = {};
+        sextantesIhos.forEach(s => {
+            ihosInicial[s.id] = { pieza: '', placa: '', calculo: '', gingivitis: '' };
+        });
 
         return {
             CONDICIONES: condicionesIniciales,
+            ihos: ihosInicial,
             tipo: tipoSugerido,
             denticion: 'permanente',
             herramienta: Object.keys(condicionesIniciales)[0] ? Number(Object.keys(condicionesIniciales)[0]) : 'borrar',
@@ -399,6 +490,17 @@
                     if (movilidad) agregarInput(`periodontal[${indicePeriodontal}][movilidad]`, movilidad);
                     if (recesion) agregarInput(`periodontal[${indicePeriodontal}][recesion]`, recesion);
                     indicePeriodontal++;
+                });
+
+                let indiceIhos = 0;
+                Object.entries(this.ihos).forEach(([sextanteId, valores]) => {
+                    if (!valores.pieza) return; // sextante marcado "No aplica"
+                    agregarInput(`ihos[${indiceIhos}][sextante_id]`, sextanteId);
+                    agregarInput(`ihos[${indiceIhos}][pieza_examinada]`, valores.pieza);
+                    if (valores.placa !== '') agregarInput(`ihos[${indiceIhos}][placa]`, valores.placa);
+                    if (valores.calculo !== '') agregarInput(`ihos[${indiceIhos}][calculo]`, valores.calculo);
+                    if (valores.gingivitis !== '') agregarInput(`ihos[${indiceIhos}][gingivitis]`, valores.gingivitis);
+                    indiceIhos++;
                 });
             },
         };

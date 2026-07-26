@@ -6,7 +6,9 @@ use App\Http\Requests\StoreOdontogramaRequest;
 use App\Models\Condicion;
 use App\Models\HistoriaClinica;
 use App\Models\Odontograma;
+use App\Models\OdontogramaIhos;
 use App\Models\OdontogramaPieza;
+use App\Models\SextanteIhos;
 use Illuminate\Support\Facades\DB;
 
 class OdontogramaController extends Controller
@@ -24,11 +26,12 @@ class OdontogramaController extends Controller
         $historiaClinica->load('paciente');
 
         $condiciones = Condicion::orderBy('orden')->get();
+        $sextantesIhos = SextanteIhos::orderBy('numero')->get();
         $tipoSugerido = $historiaClinica->odontogramas()->where('tipo', 'inicial')->exists()
             ? 'evolutivo'
             : 'inicial';
 
-        return view('odontogramas.create', compact('historiaClinica', 'condiciones', 'tipoSugerido'));
+        return view('odontogramas.create', compact('historiaClinica', 'condiciones', 'sextantesIhos', 'tipoSugerido'));
     }
 
     public function store(StoreOdontogramaRequest $request, HistoriaClinica $historiaClinica)
@@ -50,8 +53,11 @@ class OdontogramaController extends Controller
                 'denticion' => $datos['denticion'],
                 'fecha' => $datos['fecha'],
                 'firmado_at' => now(),
-                // Los índices se calculan más abajo, una vez insertadas
-                // las piezas y hallazgos; se actualizan al final.
+                'enfermedad_periodontal' => $datos['enfermedad_periodontal'] ?? null,
+                'tipo_oclusion' => $datos['tipo_oclusion'] ?? null,
+                'fluorosis' => $datos['fluorosis'] ?? null,
+                // Los índices CPO-D/ceo-d e IHOS se calculan más abajo, una
+                // vez insertadas las piezas y registros; se actualizan al final.
             ]);
 
             $piezasCreadas = [];
@@ -83,9 +89,23 @@ class OdontogramaController extends Controller
             $piezasConHallazgos = $odontograma->piezas()->with('hallazgos.condicion')->get();
             $indices = Odontograma::calcularIndices($piezasConHallazgos);
 
+            $registrosIhos = collect($datos['ihos'] ?? [])->map(fn ($entrada) => OdontogramaIhos::create([
+                'odontograma_id' => $odontograma->id,
+                'sextante_ihos_id' => $entrada['sextante_id'],
+                'pieza_examinada' => $entrada['pieza_examinada'] ?? null,
+                'placa' => $entrada['placa'] ?? null,
+                'calculo' => $entrada['calculo'] ?? null,
+                'gingivitis' => $entrada['gingivitis'] ?? null,
+            ]));
+
+            $promediosIhos = Odontograma::calcularPromediosIhos($registrosIhos);
+
             $odontograma->update([
                 'cpod_c' => $indices['cpod']['c'], 'cpod_p' => $indices['cpod']['p'], 'cpod_o' => $indices['cpod']['o'],
                 'ceod_c' => $indices['ceod']['c'], 'ceod_e' => $indices['ceod']['e'], 'ceod_o' => $indices['ceod']['o'],
+                'ihos_placa_promedio' => $promediosIhos['placa'],
+                'ihos_calculo_promedio' => $promediosIhos['calculo'],
+                'ihos_gingivitis_promedio' => $promediosIhos['gingivitis'],
             ]);
 
             return $odontograma;
@@ -104,6 +124,7 @@ class OdontogramaController extends Controller
             'historiaClinica.paciente',
             'odontologo',
             'piezas.hallazgos.condicion',
+            'ihosRegistros.sextante',
         );
 
         $condicionesIndexadas = Condicion::all()->keyBy('id')
