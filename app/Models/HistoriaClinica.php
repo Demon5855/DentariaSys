@@ -70,4 +70,9 @@ class HistoriaClinica extends Model implements Auditable
     {
         return $this->hasMany(Consulta::class)->orderByDesc('fecha');
     }
+
+    public function odontogramas(): HasMany
+    {
+        return $this->hasMany(Odontograma::class)->orderByDesc('fecha');
+    }
 }

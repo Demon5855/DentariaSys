@@ -20,7 +20,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(RoleSeeder::class);
+        $this->call([
+            RoleSeeder::class,
+            AntecedenteSeeder::class,
+            RegionEstomatognaticaSeeder::class,
+            CondicionSeeder::class,
+        ]);
 
         $usuarioPrueba = User::factory()->create([
             'name' => 'Usuario de Prueba',
