@@ -4,9 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\Condicion;
 use App\Models\HistoriaClinica;
+use App\Models\SextanteIhos;
 use App\Models\User;
 use Database\Seeders\CondicionSeeder;
 use Database\Seeders\RoleSeeder;
+use Database\Seeders\SextanteIhosSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,6 +21,7 @@ class OdontogramaTest extends TestCase
         parent::setUp();
         $this->seed(RoleSeeder::class);
         $this->seed(CondicionSeeder::class);
+        $this->seed(SextanteIhosSeeder::class);
     }
 
     private function odontologo(): User
@@ -282,5 +285,101 @@ class OdontogramaTest extends TestCase
         $this->actingAs($auxiliar)
             ->get(route('odontogramas.create', $odontograma->historiaClinica))
             ->assertForbidden();
+    }
+
+    public function test_guarda_ihos_y_calcula_promedios_solo_sobre_sextantes_examinados(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+        $sextante1 = SextanteIhos::where('numero', 1)->firstOrFail(); // primaria 16
+        $sextante2 = SextanteIhos::where('numero', 2)->firstOrFail(); // primaria 11
+        $sextante3 = SextanteIhos::where('numero', 3)->firstOrFail(); // primaria 26, no se examina
+
+        $this->actingAs($this->odontologo())->post(route('odontogramas.store', $historiaClinica), [
+            'tipo' => 'inicial',
+            'denticion' => 'permanente',
+            'fecha' => now()->toDateString(),
+            'ihos' => [
+                ['sextante_id' => $sextante1->id, 'pieza_examinada' => 16, 'placa' => 2, 'calculo' => 1, 'gingivitis' => 1],
+                ['sextante_id' => $sextante2->id, 'pieza_examinada' => 11, 'placa' => 0, 'calculo' => 0, 'gingivitis' => 0],
+                ['sextante_id' => $sextante3->id], // sin pieza_examinada: "no aplica"
+            ],
+        ]);
+
+        $odontograma = $historiaClinica->odontogramas()->firstOrFail();
+
+        $this->assertDatabaseCount('odontograma_ihos', 3);
+        $this->assertSame('1.00', $odontograma->ihos_placa_promedio);
+        $this->assertSame('0.50', $odontograma->ihos_calculo_promedio);
+        $this->assertSame('0.50', $odontograma->ihos_gingivitis_promedio);
+    }
+
+    public function test_permite_sustituir_por_la_pieza_alterna_cuando_la_primaria_no_esta_en_boca(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+        $sextante2 = SextanteIhos::where('numero', 2)->firstOrFail(); // primaria 11, alterna 21
+
+        $response = $this->actingAs($this->odontologo())->post(route('odontogramas.store', $historiaClinica), [
+            'tipo' => 'inicial',
+            'denticion' => 'permanente',
+            'fecha' => now()->toDateString(),
+            'ihos' => [
+                ['sextante_id' => $sextante2->id, 'pieza_examinada' => 21, 'placa' => 1], // alterna, no la primaria
+            ],
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('odontograma_ihos', ['sextante_ihos_id' => $sextante2->id, 'pieza_examinada' => 21]);
+    }
+
+    public function test_rechaza_pieza_examinada_que_no_es_candidata_del_sextante(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+        $sextante1 = SextanteIhos::where('numero', 1)->firstOrFail(); // candidatas: 16, 17, 55
+
+        $response = $this->actingAs($this->odontologo())->post(route('odontogramas.store', $historiaClinica), [
+            'tipo' => 'inicial',
+            'denticion' => 'permanente',
+            'fecha' => now()->toDateString(),
+            'ihos' => [
+                ['sextante_id' => $sextante1->id, 'pieza_examinada' => 46], // pieza de otro sextante, inválida aquí
+            ],
+        ]);
+
+        $response->assertSessionHasErrors('ihos.0.pieza_examinada');
+    }
+
+    public function test_guarda_enfermedad_periodontal_oclusion_y_fluorosis(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+
+        $this->actingAs($this->odontologo())->post(route('odontogramas.store', $historiaClinica), [
+            'tipo' => 'inicial',
+            'denticion' => 'permanente',
+            'fecha' => now()->toDateString(),
+            'enfermedad_periodontal' => 'moderada',
+            'tipo_oclusion' => 'II',
+            'fluorosis' => 'leve',
+        ]);
+
+        $odontograma = $historiaClinica->odontogramas()->firstOrFail();
+
+        $this->assertSame('moderada', $odontograma->enfermedad_periodontal);
+        $this->assertSame('II', $odontograma->tipo_oclusion);
+        $this->assertSame('leve', $odontograma->fluorosis);
+    }
+
+    public function test_sin_ningun_sextante_examinado_los_promedios_quedan_nulos(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+
+        $this->actingAs($this->odontologo())->post(route('odontogramas.store', $historiaClinica), [
+            'tipo' => 'inicial', 'denticion' => 'permanente', 'fecha' => now()->toDateString(),
+        ]);
+
+        $odontograma = $historiaClinica->odontogramas()->firstOrFail();
+
+        $this->assertNull($odontograma->ihos_placa_promedio);
+        $this->assertNull($odontograma->ihos_calculo_promedio);
+        $this->assertNull($odontograma->ihos_gingivitis_promedio);
     }
 }
