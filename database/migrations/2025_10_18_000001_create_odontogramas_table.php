@@ -43,6 +43,23 @@ return new class extends Migration {
             $table->unsignedTinyInteger('ceod_e')->default(0);
             $table->unsignedTinyInteger('ceod_o')->default(0);
 
+            // Sección I: índice de higiene oral simplificada. Promedios
+            // sobre los sextantes examinados (ver odontograma_ihos) — el
+            // instructivo pide NO redondear hacia arriba, así que se
+            // guarda el promedio real sin ceil().
+            $table->decimal('ihos_placa_promedio', 3, 2)->nullable();
+            $table->decimal('ihos_calculo_promedio', 3, 2)->nullable();
+            $table->decimal('ihos_gingivitis_promedio', 3, 2)->nullable();
+
+            // Resto de la sección I. Nombres tal como los da el instructivo
+            // (leve/moderada/avanzada para periodontal — el formulario
+            // impreso que reconstruimos decía "severa" en vez de "avanzada";
+            // usamos el instructivo por ser la fuente más autoritativa,
+            // pendiente de confirmar cuál usan en la práctica).
+            $table->enum('enfermedad_periodontal', ['ninguna', 'leve', 'moderada', 'avanzada'])->nullable();
+            $table->enum('tipo_oclusion', ['I', 'II', 'III'])->nullable(); // clasificación de Angle
+            $table->enum('fluorosis', ['ninguna', 'leve', 'moderada', 'severa'])->nullable(); // clasificación de Dean
+
             $table->timestamps();
 
             $table->index(['historia_clinica_id', 'fecha']);

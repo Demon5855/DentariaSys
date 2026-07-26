@@ -25,6 +25,8 @@ class Odontograma extends Model
         'firmado_at',
         'cpod_c', 'cpod_p', 'cpod_o',
         'ceod_c', 'ceod_e', 'ceod_o',
+        'ihos_placa_promedio', 'ihos_calculo_promedio', 'ihos_gingivitis_promedio',
+        'enfermedad_periodontal', 'tipo_oclusion', 'fluorosis',
     ];
 
     protected function casts(): array
@@ -32,6 +34,9 @@ class Odontograma extends Model
         return [
             'fecha' => 'date',
             'firmado_at' => 'datetime',
+            'ihos_placa_promedio' => 'decimal:2',
+            'ihos_calculo_promedio' => 'decimal:2',
+            'ihos_gingivitis_promedio' => 'decimal:2',
         ];
     }
 
@@ -53,6 +58,38 @@ class Odontograma extends Model
     public function piezas(): HasMany
     {
         return $this->hasMany(OdontogramaPieza::class)->orderBy('pieza');
+    }
+
+    public function ihosRegistros(): HasMany
+    {
+        return $this->hasMany(OdontogramaIhos::class)->orderBy('sextante_ihos_id');
+    }
+
+    /**
+     * Promedia placa/cálculo/gingivitis SOLO sobre los sextantes que
+     * tuvieron una pieza examinada (pieza_examinada no nulo). El
+     * instructivo pide dividir "para el número de dientes examinados", es
+     * decir, los sextantes marcados "—" no entran ni al numerador ni al
+     * denominador. Y pide explícitamente NO redondear hacia arriba —aquí
+     * se guarda el promedio real, sin ceil().
+     *
+     * @param  \Illuminate\Support\Collection<int, OdontogramaIhos>  $registros
+     */
+    public static function calcularPromediosIhos($registros): array
+    {
+        $conPieza = collect($registros)->filter(fn (OdontogramaIhos $r) => $r->pieza_examinada !== null);
+
+        $promedio = function (string $campo) use ($conPieza) {
+            $valores = $conPieza->pluck($campo)->filter(fn ($v) => $v !== null);
+
+            return $valores->isEmpty() ? null : round($valores->avg(), 2);
+        };
+
+        return [
+            'placa' => $promedio('placa'),
+            'calculo' => $promedio('calculo'),
+            'gingivitis' => $promedio('gingivitis'),
+        ];
     }
 
     public static function esPiezaPermanente(int $pieza): bool
