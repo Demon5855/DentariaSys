@@ -5,9 +5,9 @@ services:
     container_name: dentariasys-db
     restart: always
     environment:
-      POSTGRES_DB: dentariasys_db
-      POSTGRES_USER: pgadmin
-      POSTGRES_PASSWORD: SeguridadAnteTodo55
+      POSTGRES_DB: ${DB_DATABASE:-dentariasys_db}
+      POSTGRES_USER: ${DB_USERNAME:-pgadmin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
       TZ: 'America/Guayaquil'
     ports:
       - "5433:5432"
