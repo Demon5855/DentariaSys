@@ -34,8 +34,11 @@ class AuditTest extends TestCase
         $paciente = Paciente::factory()->create(['telefono' => '0999999999']);
 
         $this->put(route('pacientes.update', $paciente), [
+            'tipo_documento' => $paciente->tipo_documento,
+            'numero_documento' => $paciente->numero_documento,
             'primer_nombre' => $paciente->primer_nombre,
             'primer_apellido' => $paciente->primer_apellido,
+            'sexo' => $paciente->sexo,
             'fecha_nacimiento' => $paciente->fecha_nacimiento->format('Y-m-d'),
             'telefono' => '0888888888',
         ]);

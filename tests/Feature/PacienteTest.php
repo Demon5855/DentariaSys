@@ -49,8 +49,11 @@ class PacienteTest extends TestCase
     public function test_crea_un_paciente_valido(): void
     {
         $datos = [
+            'tipo_documento' => 'cedula',
+            'numero_documento' => '1710034065',
             'primer_nombre' => 'Ana',
             'primer_apellido' => 'Torres',
+            'sexo' => 'M',
             'fecha_nacimiento' => '1990-05-10',
         ];
 
@@ -63,12 +66,63 @@ class PacienteTest extends TestCase
     public function test_rechaza_nombre_con_numeros(): void
     {
         $response = $this->post(route('pacientes.store'), [
+            'tipo_documento' => 'cedula',
+            'numero_documento' => '1710034065',
             'primer_nombre' => 'Ana123',
             'primer_apellido' => 'Torres',
+            'sexo' => 'M',
             'fecha_nacimiento' => '1990-05-10',
         ]);
 
         $response->assertSessionHasErrors('primer_nombre');
+    }
+
+    public function test_rechaza_cedula_con_digito_verificador_invalido(): void
+    {
+        $response = $this->post(route('pacientes.store'), [
+            'tipo_documento' => 'cedula',
+            'numero_documento' => '1710034066', // dígito verificador correcto es 5, no 6
+            'primer_nombre' => 'Ana',
+            'primer_apellido' => 'Torres',
+            'sexo' => 'M',
+            'fecha_nacimiento' => '1990-05-10',
+        ]);
+
+        $response->assertSessionHasErrors('numero_documento');
+    }
+
+    public function test_documento_temporal_se_genera_automaticamente(): void
+    {
+        $response = $this->post(route('pacientes.store'), [
+            'tipo_documento' => 'temporal',
+            'primer_nombre' => 'Sin',
+            'primer_apellido' => 'Documento',
+            'sexo' => 'H',
+            'fecha_nacimiento' => '2000-01-01',
+        ]);
+
+        $response->assertRedirect(route('pacientes.index'));
+
+        $paciente = Paciente::where('primer_nombre', 'Sin')->first();
+        $this->assertNotNull($paciente->numero_documento);
+        $this->assertSame(17, strlen($paciente->numero_documento));
+    }
+
+    public function test_menor_de_edad_requiere_representante_legal(): void
+    {
+        $response = $this->post(route('pacientes.store'), [
+            'tipo_documento' => 'cedula',
+            'numero_documento' => '1710034065',
+            'primer_nombre' => 'Niño',
+            'primer_apellido' => 'Prueba',
+            'sexo' => 'H',
+            'fecha_nacimiento' => now()->subYears(10)->toDateString(),
+        ]);
+
+        $response->assertSessionHasErrors([
+            'representante_nombre', 'representante_documento',
+            'representante_parentesco', 'representante_telefono',
+        ]);
     }
 
     public function test_muestra_el_perfil_de_un_paciente(): void

@@ -62,4 +62,20 @@ class ConsultaTest extends TestCase
         $response->assertOk();
         $response->assertSee('Control de rutina');
     }
+
+    public function test_no_permite_registrar_consulta_sobre_historia_vencida(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->vencida()->create();
+
+        $this->get(route('consultas.create', $historiaClinica))
+            ->assertRedirect(route('historias.show', $historiaClinica));
+
+        $response = $this->post(route('consultas.store', $historiaClinica), [
+            'fecha' => now()->toDateString(),
+            'motivo_consulta' => 'Intento sobre historia vencida',
+        ]);
+
+        $response->assertRedirect(route('historias.show', $historiaClinica));
+        $this->assertDatabaseCount('consultas', 0);
+    }
 }

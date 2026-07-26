@@ -34,8 +34,11 @@ class PolicyTest extends TestCase
         $this->actingAs($recepcion)->get(route('pacientes.index'))->assertOk();
 
         $this->actingAs($recepcion)->post(route('pacientes.store'), [
+            'tipo_documento' => 'cedula',
+            'numero_documento' => '1710034065',
             'primer_nombre' => 'Ana',
             'primer_apellido' => 'Torres',
+            'sexo' => 'M',
             'fecha_nacimiento' => '1990-01-01',
         ])->assertRedirect(route('pacientes.index'));
     }
@@ -83,15 +86,20 @@ class PolicyTest extends TestCase
         $paciente = Paciente::factory()->create();
 
         $this->actingAs($odontologo)
-            ->post(route('historias.store', $paciente), ['fecha_apertura' => now()->toDateString()])
-            ->assertRedirect(route('consultas.create', $paciente->historiaClinica));
+            ->post(route('historias.store', $paciente), [
+                'fecha_apertura' => now()->toDateString(),
+                'tipo_vigencia' => 'general',
+            ])
+            ->assertRedirect(route('consultas.create', $paciente->fresh()->historiaClinicaVigente));
+
+        $historiaVigente = $paciente->fresh()->historiaClinicaVigente;
 
         $this->actingAs($odontologo)
-            ->post(route('consultas.store', $paciente->historiaClinica), [
+            ->post(route('consultas.store', $historiaVigente), [
                 'fecha' => now()->toDateString(),
                 'motivo_consulta' => 'Control',
             ])
-            ->assertRedirect(route('historias.show', $paciente->historiaClinica));
+            ->assertRedirect(route('historias.show', $historiaVigente));
     }
 
     public function test_recepcion_no_puede_administrar_usuarios(): void
