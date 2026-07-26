@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\HistoriaClinicaController;
 use App\Http\Controllers\PacienteController;
@@ -26,7 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Rutas de Pacientes
+    // Rutas de Pacientes — autorización fina vía PacientePolicy (ver PacienteController)
     Route::patch('pacientes/{paciente}/restore', [PacienteController::class, 'restore'])->name('pacientes.restore');
     Route::resource('pacientes', PacienteController::class);
 
@@ -39,6 +40,12 @@ Route::middleware('auth')->group(function () {
     Route::get('historias/{historiaClinica}/consultas/crear', [ConsultaController::class, 'create'])->name('consultas.create');
     Route::post('historias/{historiaClinica}/consultas', [ConsultaController::class, 'store'])->name('consultas.store');
     Route::get('consultas/{consulta}', [ConsultaController::class, 'show'])->name('consultas.show');
+
+    // Panel de administración: solo el rol 'admin'. No hay registro público;
+    // las cuentas de personal se crean desde aquí.
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('users', UserController::class)->except(['show']);
+    });
 });
 
 require __DIR__.'/auth.php';
