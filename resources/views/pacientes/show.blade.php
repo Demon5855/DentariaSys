@@ -29,8 +29,22 @@
                             <dd class="font-medium">{{ $paciente->nombre_completo }}</dd>
                         </div>
                         <div>
+                            <dt class="text-gray-500">Documento</dt>
+                            <dd class="font-medium">
+                                {{ $paciente->numero_documento }}
+                                <span class="text-gray-400 text-xs">({{ ucfirst(str_replace('_', ' ', $paciente->tipo_documento)) }})</span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-gray-500">Sexo</dt>
+                            <dd class="font-medium">{{ $paciente->sexo === 'H' ? 'Hombre' : 'Mujer' }}</dd>
+                        </div>
+                        <div>
                             <dt class="text-gray-500">Fecha de nacimiento</dt>
-                            <dd class="font-medium">{{ $paciente->fecha_nacimiento->format('d/m/Y') }}</dd>
+                            <dd class="font-medium">
+                                {{ $paciente->fecha_nacimiento->format('d/m/Y') }}
+                                <span class="text-gray-400 text-xs">({{ $paciente->edad_detallada }})</span>
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-gray-500">Teléfono</dt>
@@ -46,6 +60,30 @@
                         </div>
                     </dl>
 
+                    @if ($paciente->es_menor_de_edad)
+                        <div class="mt-4 pt-4 border-t">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2">Representante legal</h4>
+                            <dl class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <dt class="text-gray-500">Nombre</dt>
+                                    <dd class="font-medium">{{ $paciente->representante_nombre ?? '—' }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-gray-500">Documento</dt>
+                                    <dd class="font-medium">{{ $paciente->representante_documento ?? '—' }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-gray-500">Parentesco</dt>
+                                    <dd class="font-medium">{{ $paciente->representante_parentesco ?? '—' }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-gray-500">Teléfono</dt>
+                                    <dd class="font-medium">{{ $paciente->representante_telefono ?? '—' }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    @endif
+
                     <div class="flex items-center justify-end gap-4 mt-6 pt-4 border-t">
                         <a href="{{ route('pacientes.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Volver al listado</a>
                         <a href="{{ route('pacientes.edit', $paciente) }}"
@@ -59,26 +97,38 @@
             @can('historias.ver')
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
-                        <h3 class="text-lg font-bold mb-4">Historia clínica</h3>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold">Historias clínicas</h3>
+                            @if (!$paciente->historiaClinicaVigente)
+                                @can('historias.abrir')
+                                    <a href="{{ route('historias.create', $paciente) }}"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md">
+                                        + Abrir historia clínica
+                                    </a>
+                                @endcan
+                            @endif
+                        </div>
 
-                        @if ($paciente->historiaClinica)
-                            <p class="text-sm text-gray-600 mb-3">
-                                Abierta el {{ $paciente->historiaClinica->fecha_apertura->format('d/m/Y') }}
-                                · {{ $paciente->historiaClinica->consultas->count() }} consulta(s) registrada(s)
-                            </p>
-                            <a href="{{ route('historias.show', $paciente->historiaClinica) }}"
-                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-md">
-                                Ver historia clínica
+                        @forelse ($paciente->historiasClinicas as $historia)
+                            <a href="{{ route('historias.show', $historia) }}"
+                                class="flex justify-between items-center border rounded-md p-3 mb-2 hover:bg-gray-50 transition">
+                                <div>
+                                    <p class="text-sm font-medium">
+                                        Abierta el {{ $historia->fecha_apertura->format('d/m/Y') }}
+                                        · {{ $historia->consultas->count() }} consulta(s)
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        Vigencia: {{ ucfirst($historia->tipo_vigencia) }}
+                                        — vence {{ $historia->fecha_vencimiento->format('d/m/Y') }}
+                                    </p>
+                                </div>
+                                <span class="text-xs font-medium px-2.5 py-0.5 rounded-full {{ $historia->esta_vencida ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                                    {{ $historia->esta_vencida ? 'Vencida' : 'Vigente' }}
+                                </span>
                             </a>
-                        @elseif (auth()->user()->can('historias.abrir'))
-                            <p class="text-sm text-gray-600 mb-3">Este paciente todavía no tiene historia clínica.</p>
-                            <a href="{{ route('historias.create', $paciente) }}"
-                                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md">
-                                + Abrir historia clínica
-                            </a>
-                        @else
-                            <p class="text-sm text-gray-600">Este paciente todavía no tiene historia clínica.</p>
-                        @endif
+                        @empty
+                            <p class="text-sm text-gray-500">Este paciente todavía no tiene historia clínica.</p>
+                        @endforelse
                     </div>
                 </div>
             @endcan

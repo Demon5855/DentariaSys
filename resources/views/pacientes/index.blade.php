@@ -71,9 +71,12 @@
                         <table class="min-w-full bg-white">
                             <thead class="bg-gray-50">
                                 <tr>
+                                    <th class="py-3 px-4 text-left">Documento</th>
                                     <th class="py-3 px-4 text-left">Nombre Completo</th>
                                     <th class="py-3 px-4 text-left">Teléfono</th>
-                                    <th class="py-3 px-4 text-left">Historia Clínica</th>
+                                    @can('historias.ver')
+                                        <th class="py-3 px-4 text-left">Historia Clínica</th>
+                                    @endcan
                                         <th class="py-3 px-4 text-center">Acciones</th>
                                 </tr>
                             </thead>
@@ -81,6 +84,7 @@
                                 @forelse ($pacientes as $paciente)
                                     <tr
                                         class="border-b border-gray-200 hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-gray-600">{{ $paciente->numero_documento }}</td>
                                         <td class="py-3 px-4 font-medium">
                                             <a href="{{ route('pacientes.show', $paciente) }}" class="hover:text-indigo-600 hover:underline">
                                                 {{ $paciente->nombre_completo }}
@@ -88,21 +92,23 @@
                                         </td>
                                         <td class="py-3 px-4">{{ $paciente->telefono ?? 'N/A' }}</td>
 
-                                        {{-- INICIO DEL BLOQUE NUEVO --}}
-                                        <td class="py-3 px-4">
-                                            @if ($paciente->historiaClinica)
-                                                <a href="{{ route('historias.show', $paciente->historiaClinica) }}"
-                                                    class="text-green-600 hover:text-green-900 font-semibold">
-                                                    Ver Historia
-                                                </a>
-                                            @else
-                                                <a href="{{ route('historias.create', $paciente) }}"
-                                                    class="text-blue-600 hover:text-blue-900">
-                                                    + Crear Historia
-                                                </a>
-                                            @endif
-                                        </td>
-                                        {{-- FIN DEL BLOQUE NUEVO --}}
+                                        @can('historias.ver')
+                                            <td class="py-3 px-4">
+                                                @if ($paciente->historiaClinicaVigente)
+                                                    <a href="{{ route('historias.show', $paciente->historiaClinicaVigente) }}"
+                                                        class="text-green-600 hover:text-green-900 font-semibold">
+                                                        Ver Historia
+                                                    </a>
+                                                @elseif (auth()->user()->can('historias.abrir'))
+                                                    <a href="{{ route('historias.create', $paciente) }}"
+                                                        class="text-blue-600 hover:text-blue-900">
+                                                        + Crear Historia
+                                                    </a>
+                                                @else
+                                                    <span class="text-gray-400">Sin historia vigente</span>
+                                                @endif
+                                            </td>
+                                        @endcan
 
                                         <td class="py-3 px-4 text-center">
                                             @if($estado === 'activos')
@@ -129,8 +135,8 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="py-8 px-4 text-center text-gray-500">No se encontraron
-                                            pacientes.</td> {{-- <-- Aumenta el colspan a 5 --}} </tr>
+                                        <td colspan="5" class="py-8 px-4 text-center text-gray-500">No se encontraron pacientes.</td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>

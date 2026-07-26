@@ -33,7 +33,7 @@ class PacienteController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $pacientes->load('historiaClinica');
+        $pacientes->load('historiaClinicaVigente');
 
         $totalActivos = Paciente::activos()->count();
         $totalInactivos = Paciente::inactivos()->count();
@@ -48,14 +48,24 @@ class PacienteController extends Controller
 
     public function store(StorePacienteRequest $request)
     {
-        Paciente::create($request->validated());
+        $datos = $request->validated();
+
+        // El instructivo del 033 dice que, sin cédula/pasaporte/carné, el
+        // número de historia clínica es "un código de 17 dígitos temporales
+        // que será emitido por el servicio de estadística". Como no hay un
+        // módulo de estadística todavía, lo generamos aquí si no vino uno.
+        if ($datos['tipo_documento'] === 'temporal' && empty($datos['numero_documento'])) {
+            $datos['numero_documento'] = Paciente::generarDocumentoTemporal();
+        }
+
+        Paciente::create($datos);
 
         return redirect()->route('pacientes.index')->with('success', 'Paciente creado exitosamente.');
     }
 
     public function show(Paciente $paciente)
     {
-        $paciente->load('historiaClinica.consultas');
+        $paciente->load('historiaClinicaVigente', 'historiasClinicas.consultas');
 
         return view('pacientes.show', compact('paciente'));
     }
