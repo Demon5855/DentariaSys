@@ -10,6 +10,8 @@ class ConsultaController extends Controller
 {
     public function create(HistoriaClinica $historiaClinica)
     {
+        $this->authorize('create', Consulta::class);
+
         $historiaClinica->load('paciente');
 
         return view('consultas.create', compact('historiaClinica'));
@@ -17,6 +19,8 @@ class ConsultaController extends Controller
 
     public function store(StoreConsultaRequest $request, HistoriaClinica $historiaClinica)
     {
+        $this->authorize('create', Consulta::class);
+
         $historiaClinica->consultas()->create(
             $request->validated() + ['profesional_id' => $request->user()?->id]
         );
@@ -28,6 +32,8 @@ class ConsultaController extends Controller
 
     public function show(Consulta $consulta)
     {
+        $this->authorize('view', $consulta);
+
         $consulta->load('historiaClinica.paciente', 'profesional');
 
         return view('consultas.show', compact('consulta'));

@@ -56,28 +56,32 @@
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-bold mb-4">Historia clínica</h3>
+            @can('historias.ver')
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900">
+                        <h3 class="text-lg font-bold mb-4">Historia clínica</h3>
 
-                    @if ($paciente->historiaClinica)
-                        <p class="text-sm text-gray-600 mb-3">
-                            Abierta el {{ $paciente->historiaClinica->fecha_apertura->format('d/m/Y') }}
-                            · {{ $paciente->historiaClinica->consultas->count() }} consulta(s) registrada(s)
-                        </p>
-                        <a href="{{ route('historias.show', $paciente->historiaClinica) }}"
-                            class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-md">
-                            Ver historia clínica
-                        </a>
-                    @else
-                        <p class="text-sm text-gray-600 mb-3">Este paciente todavía no tiene historia clínica.</p>
-                        <a href="{{ route('historias.create', $paciente) }}"
-                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md">
-                            + Abrir historia clínica
-                        </a>
-                    @endif
+                        @if ($paciente->historiaClinica)
+                            <p class="text-sm text-gray-600 mb-3">
+                                Abierta el {{ $paciente->historiaClinica->fecha_apertura->format('d/m/Y') }}
+                                · {{ $paciente->historiaClinica->consultas->count() }} consulta(s) registrada(s)
+                            </p>
+                            <a href="{{ route('historias.show', $paciente->historiaClinica) }}"
+                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-md">
+                                Ver historia clínica
+                            </a>
+                        @elseif (auth()->user()->can('historias.abrir'))
+                            <p class="text-sm text-gray-600 mb-3">Este paciente todavía no tiene historia clínica.</p>
+                            <a href="{{ route('historias.create', $paciente) }}"
+                                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md">
+                                + Abrir historia clínica
+                            </a>
+                        @else
+                            <p class="text-sm text-gray-600">Este paciente todavía no tiene historia clínica.</p>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            @endcan
 
         </div>
     </div>

@@ -10,6 +10,8 @@ class HistoriaClinicaController extends Controller
 {
     public function create(Paciente $paciente)
     {
+        $this->authorize('create', HistoriaClinica::class);
+
         if ($paciente->historiaClinica) {
             return redirect()
                 ->route('historias.show', $paciente->historiaClinica)
@@ -21,6 +23,8 @@ class HistoriaClinicaController extends Controller
 
     public function store(StoreHistoriaClinicaRequest $request, Paciente $paciente)
     {
+        $this->authorize('create', HistoriaClinica::class);
+
         if ($paciente->historiaClinica) {
             return redirect()
                 ->route('historias.show', $paciente->historiaClinica)
@@ -36,6 +40,8 @@ class HistoriaClinicaController extends Controller
 
     public function show(HistoriaClinica $historiaClinica)
     {
+        $this->authorize('view', $historiaClinica);
+
         $historiaClinica->load('paciente', 'consultas.profesional');
 
         return view('historias.show', compact('historiaClinica'));

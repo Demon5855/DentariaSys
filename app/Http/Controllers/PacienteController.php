@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class PacienteController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Paciente::class, 'paciente');
+    }
+
     public function index(Request $request)
     {
         $estado = $request->get('estado', 'activos');
@@ -76,6 +81,8 @@ class PacienteController extends Controller
 
     public function restore(Paciente $paciente)
     {
+        $this->authorize('restore', $paciente);
+
         $paciente->update(['activo' => true]);
 
         return redirect()->route('pacientes.index', ['estado' => 'inactivos'])->with('status', 'Paciente reactivado exitosamente.');

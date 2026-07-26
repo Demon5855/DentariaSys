@@ -12,14 +12,20 @@ class DatabaseSeeder extends Seeder
 
     /**
      * Seed the application's database.
+     *
+     * ⚠ Este seeder es para DESARROLLO LOCAL. Crea un usuario de prueba con
+     * contraseña conocida ('password', el default de Breeze). Nunca lo
+     * corras contra una base de datos de producción — para crear el primer
+     * administrador real usa: php artisan admin:crear
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call(RoleSeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
+        $usuarioPrueba = User::factory()->create([
+            'name' => 'Usuario de Prueba',
             'email' => 'test@example.com',
         ]);
+        $usuarioPrueba->assignRole('odontologo');
     }
 }

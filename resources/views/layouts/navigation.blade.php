@@ -16,6 +16,12 @@
                     <x-nav-link :href="route('pacientes.index')" :active="request()->routeIs('pacientes.*')">
                         {{ __('Pacientes') }}
                     </x-nav-link>
+
+                    @can('usuarios.gestionar')
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Usuarios') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -68,6 +74,12 @@
             <x-responsive-nav-link :href="route('pacientes.index')" :active="request()->routeIs('pacientes.*')">
                 {{ __('Pacientes') }}
             </x-responsive-nav-link>
+
+            @can('usuarios.gestionar')
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                    {{ __('Usuarios') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         <div class="pt-4 pb-1 border-t border-gray-200">

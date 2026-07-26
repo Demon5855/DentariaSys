@@ -22,10 +22,12 @@
                             Abierta el {{ $historiaClinica->fecha_apertura->format('d/m/Y') }}
                         </p>
                     </div>
-                    <a href="{{ route('consultas.create', $historiaClinica) }}"
-                        class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
-                        + Registrar consulta
-                    </a>
+                    @can('consultas.crear')
+                        <a href="{{ route('consultas.create', $historiaClinica) }}"
+                            class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
+                            + Registrar consulta
+                        </a>
+                    @endcan
                 </div>
             </div>
 
