@@ -81,8 +81,12 @@
                                 @forelse ($pacientes as $paciente)
                                     <tr
                                         class="border-b border-gray-200 hover:bg-gray-50">
-                                        <td class="py-3 px-4 font-medium">{{ $paciente->nombre_completo }}</td>
-                                        <td class="py-3 px-4">{{ $paciente->pac_telefono ?? 'N/A' }}</td>
+                                        <td class="py-3 px-4 font-medium">
+                                            <a href="{{ route('pacientes.show', $paciente) }}" class="hover:text-indigo-600 hover:underline">
+                                                {{ $paciente->nombre_completo }}
+                                            </a>
+                                        </td>
+                                        <td class="py-3 px-4">{{ $paciente->telefono ?? 'N/A' }}</td>
 
                                         {{-- INICIO DEL BLOQUE NUEVO --}}
                                         <td class="py-3 px-4">
