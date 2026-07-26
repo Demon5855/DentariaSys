@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             AntecedenteSeeder::class,
             RegionEstomatognaticaSeeder::class,
             CondicionSeeder::class,
+            SextanteIhosSeeder::class,
         ]);
 
         $usuarioPrueba = User::factory()->create([
