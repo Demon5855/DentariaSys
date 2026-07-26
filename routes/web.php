@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\HistoriaClinicaController;
+use App\Http\Controllers\OdontogramaController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,12 @@ Route::middleware('auth')->group(function () {
     Route::get('historias/{historiaClinica}/consultas/crear', [ConsultaController::class, 'create'])->name('consultas.create');
     Route::post('historias/{historiaClinica}/consultas', [ConsultaController::class, 'store'])->name('consultas.store');
     Route::get('consultas/{consulta}', [ConsultaController::class, 'show'])->name('consultas.show');
+
+    // Rutas de Odontograma. Sin update/edit a propósito: el instructivo
+    // prohíbe alterar un odontograma ya registrado.
+    Route::get('historias/{historiaClinica}/odontogramas/crear', [OdontogramaController::class, 'create'])->name('odontogramas.create');
+    Route::post('historias/{historiaClinica}/odontogramas', [OdontogramaController::class, 'store'])->name('odontogramas.store');
+    Route::get('odontogramas/{odontograma}', [OdontogramaController::class, 'show'])->name('odontogramas.show');
 
     // Panel de administración: solo el rol 'admin'. No hay registro público;
     // las cuentas de personal se crean desde aquí.

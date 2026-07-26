@@ -43,6 +43,42 @@
                 </div>
             </div>
 
+            @can('odontogramas.ver')
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold">Odontogramas</h3>
+                            @can('odontogramas.crear')
+                                @if (!$historiaClinica->esta_vencida)
+                                    <a href="{{ route('odontogramas.create', $historiaClinica) }}"
+                                        class="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-md shadow-sm">
+                                        + Registrar odontograma
+                                    </a>
+                                @endif
+                            @endcan
+                        </div>
+
+                        @forelse ($historiaClinica->odontogramas as $odontograma)
+                            <a href="{{ route('odontogramas.show', $odontograma) }}"
+                                class="flex justify-between items-center border rounded-md p-3 mb-2 hover:bg-gray-50 transition">
+                                <div>
+                                    <p class="text-sm font-medium">
+                                        {{ ucfirst($odontograma->tipo) }} — {{ $odontograma->fecha->format('d/m/Y') }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        CPO-D: {{ $odontograma->cpod_c + $odontograma->cpod_p + $odontograma->cpod_o }}
+                                        · ceo-d: {{ $odontograma->ceod_c + $odontograma->ceod_e + $odontograma->ceod_o }}
+                                    </p>
+                                </div>
+                                <span class="text-xs bg-gray-800 text-white px-2 py-0.5 rounded-full">🔒</span>
+                            </a>
+                        @empty
+                            <p class="text-sm text-gray-500">Todavía no hay odontogramas registrados.</p>
+                        @endforelse
+                    </div>
+                </div>
+            @endcan
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-bold mb-4">Consultas</h3>
