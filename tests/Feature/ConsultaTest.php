@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\HistoriaClinica;
 use App\Models\User;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,7 +15,11 @@ class ConsultaTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->seed(RoleSeeder::class);
+
+        $usuario = User::factory()->create();
+        $usuario->assignRole('admin');
+        $this->actingAs($usuario);
     }
 
     public function test_registra_una_consulta_dentro_de_la_historia_clinica(): void

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Paciente;
 use App\Models\User;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,7 +15,11 @@ class PacienteTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->seed(RoleSeeder::class);
+
+        $usuario = User::factory()->create();
+        $usuario->assignRole('admin');
+        $this->actingAs($usuario);
     }
 
     public function test_lista_solo_pacientes_activos_por_defecto(): void
