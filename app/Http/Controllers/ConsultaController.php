@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreConsultaRequest;
+use App\Models\Antecedente;
 use App\Models\Consulta;
 use App\Models\HistoriaClinica;
+use App\Models\RegionEstomatognatica;
+use Illuminate\Support\Arr;
 
 class ConsultaController extends Controller
 {
@@ -20,7 +23,10 @@ class ConsultaController extends Controller
 
         $historiaClinica->load('paciente');
 
-        return view('consultas.create', compact('historiaClinica'));
+        $antecedentes = Antecedente::orderBy('codigo')->get();
+        $regiones = RegionEstomatognatica::orderBy('numero')->get();
+
+        return view('consultas.create', compact('historiaClinica', 'antecedentes', 'regiones'));
     }
 
     public function store(StoreConsultaRequest $request, HistoriaClinica $historiaClinica)
@@ -33,9 +39,29 @@ class ConsultaController extends Controller
                 ->with('info', 'Esta historia clínica venció. Abre una nueva desde el perfil del paciente.');
         }
 
-        $historiaClinica->consultas()->create(
-            $request->validated() + ['profesional_id' => $request->user()?->id]
+        $datos = $request->validated();
+
+        // Las casillas marcadas viajan en el mismo request, pero se guardan
+        // en tablas pivote aparte — no son columnas de `consultas`.
+        $antecedentesPersonales = Arr::pull($datos, 'antecedentes_personales_marcados', []);
+        $antecedentesFamiliares = Arr::pull($datos, 'antecedentes_familiares_marcados', []);
+        $regionesAfectadas = Arr::pull($datos, 'regiones_afectadas', []);
+
+        $consulta = $historiaClinica->consultas()->create(
+            $datos + ['profesional_id' => $request->user()?->id]
         );
+
+        if (! empty($antecedentesPersonales)) {
+            $consulta->antecedentesPersonalesMarcados()->attach($antecedentesPersonales, ['tipo' => 'personal']);
+        }
+
+        if (! empty($antecedentesFamiliares)) {
+            $consulta->antecedentesFamiliaresMarcados()->attach($antecedentesFamiliares, ['tipo' => 'familiar']);
+        }
+
+        if (! empty($regionesAfectadas)) {
+            $consulta->regionesAfectadas()->attach($regionesAfectadas);
+        }
 
         return redirect()
             ->route('historias.show', $historiaClinica)
@@ -46,7 +72,13 @@ class ConsultaController extends Controller
     {
         $this->authorize('view', $consulta);
 
-        $consulta->load('historiaClinica.paciente', 'profesional');
+        $consulta->load(
+            'historiaClinica.paciente',
+            'profesional',
+            'antecedentesPersonalesMarcados',
+            'antecedentesFamiliaresMarcados',
+            'regionesAfectadas',
+        );
 
         return view('consultas.show', compact('consulta'));
     }

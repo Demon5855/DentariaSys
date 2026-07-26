@@ -36,14 +36,43 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-input-label for="antecedentes_personales" value="Antecedentes patológicos personales" />
-                                    <textarea id="antecedentes_personales" name="antecedentes_personales" rows="3"
+                                    <x-input-label value="Antecedentes patológicos personales" />
+                                    <div class="grid grid-cols-1 gap-1 mt-2 mb-3 border rounded-md p-3 bg-gray-50">
+                                        @foreach ($antecedentes as $antecedente)
+                                            <label class="flex items-center gap-2 text-sm">
+                                                <input type="checkbox" name="antecedentes_personales_marcados[]" value="{{ $antecedente->id }}"
+                                                    @checked(in_array($antecedente->id, old('antecedentes_personales_marcados', [])))
+                                                    class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                                {{ $antecedente->codigo }}. {{ $antecedente->nombre }}
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                    <x-input-error :messages="$errors->get('antecedentes_personales_marcados')" class="mt-2" />
+
+                                    <x-input-label for="antecedentes_personales" value="Describir (ej: '1. Penicilina')" />
+                                    <textarea id="antecedentes_personales" name="antecedentes_personales" rows="2"
+                                        placeholder="No refiere antecedentes"
                                         class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('antecedentes_personales') }}</textarea>
                                     <x-input-error :messages="$errors->get('antecedentes_personales')" class="mt-2" />
                                 </div>
                                 <div>
-                                    <x-input-label for="antecedentes_familiares" value="Antecedentes patológicos familiares" />
-                                    <textarea id="antecedentes_familiares" name="antecedentes_familiares" rows="3"
+                                    <x-input-label value="Antecedentes patológicos familiares" />
+                                    <p class="text-xs text-gray-500 mb-1">Hasta 3er grado de consanguinidad, 1ro de afinidad</p>
+                                    <div class="grid grid-cols-1 gap-1 mt-2 mb-3 border rounded-md p-3 bg-gray-50">
+                                        @foreach ($antecedentes as $antecedente)
+                                            <label class="flex items-center gap-2 text-sm">
+                                                <input type="checkbox" name="antecedentes_familiares_marcados[]" value="{{ $antecedente->id }}"
+                                                    @checked(in_array($antecedente->id, old('antecedentes_familiares_marcados', [])))
+                                                    class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                                {{ $antecedente->codigo }}. {{ $antecedente->nombre }}
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                    <x-input-error :messages="$errors->get('antecedentes_familiares_marcados')" class="mt-2" />
+
+                                    <x-input-label for="antecedentes_familiares" value="Describir" />
+                                    <textarea id="antecedentes_familiares" name="antecedentes_familiares" rows="2"
+                                        placeholder="No refiere antecedentes"
                                         class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('antecedentes_familiares') }}</textarea>
                                     <x-input-error :messages="$errors->get('antecedentes_familiares')" class="mt-2" />
                                 </div>
@@ -80,9 +109,22 @@
                             </div>
 
                             <div>
-                                <x-input-label for="examen_estomatognatico" value="Examen del sistema estomatognático" />
+                                <x-input-label value="Examen del sistema estomatognático — regiones afectadas" />
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-1 mt-2 mb-3 border rounded-md p-3 bg-gray-50">
+                                    @foreach ($regiones as $region)
+                                        <label class="flex items-center gap-2 text-sm">
+                                            <input type="checkbox" name="regiones_afectadas[]" value="{{ $region->id }}"
+                                                @checked(in_array($region->id, old('regiones_afectadas', [])))
+                                                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                            {{ $region->numero }}. {{ $region->nombre }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                                <x-input-error :messages="$errors->get('regiones_afectadas')" class="mt-2" />
+
+                                <x-input-label for="examen_estomatognatico" value="Describir hallazgo por región (ej: '5. Úlcera en borde lateral')" />
                                 <textarea id="examen_estomatognatico" name="examen_estomatognatico" rows="3"
-                                    placeholder="Sin patología aparente, o describir hallazgo por región"
+                                    placeholder="Sin patología aparente"
                                     class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('examen_estomatognatico') }}</textarea>
                                 <x-input-error :messages="$errors->get('examen_estomatognatico')" class="mt-2" />
                             </div>

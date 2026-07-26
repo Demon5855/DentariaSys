@@ -24,11 +24,29 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-b pb-4">
                         <div>
                             <h3 class="text-lg font-bold">Antecedentes personales</h3>
-                            <p class="whitespace-pre-wrap">{{ $consulta->antecedentes_personales ?? 'No registrados.' }}</p>
+                            @if ($consulta->antecedentesPersonalesMarcados->isNotEmpty())
+                                <ul class="text-sm text-gray-700 list-disc list-inside mb-2">
+                                    @foreach ($consulta->antecedentesPersonalesMarcados as $antecedente)
+                                        <li>{{ $antecedente->codigo }}. {{ $antecedente->nombre }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-sm text-gray-400 mb-2">No refiere antecedentes.</p>
+                            @endif
+                            <p class="whitespace-pre-wrap text-sm">{{ $consulta->antecedentes_personales }}</p>
                         </div>
                         <div>
                             <h3 class="text-lg font-bold">Antecedentes familiares</h3>
-                            <p class="whitespace-pre-wrap">{{ $consulta->antecedentes_familiares ?? 'No registrados.' }}</p>
+                            @if ($consulta->antecedentesFamiliaresMarcados->isNotEmpty())
+                                <ul class="text-sm text-gray-700 list-disc list-inside mb-2">
+                                    @foreach ($consulta->antecedentesFamiliaresMarcados as $antecedente)
+                                        <li>{{ $antecedente->codigo }}. {{ $antecedente->nombre }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-sm text-gray-400 mb-2">No refiere antecedentes.</p>
+                            @endif
+                            <p class="whitespace-pre-wrap text-sm">{{ $consulta->antecedentes_familiares }}</p>
                         </div>
                     </div>
 
@@ -44,7 +62,16 @@
 
                     <div class="border-b pb-4">
                         <h3 class="text-lg font-bold">Examen del sistema estomatognático</h3>
-                        <p class="whitespace-pre-wrap">{{ $consulta->examen_estomatognatico ?? 'Sin patología aparente.' }}</p>
+                        @if ($consulta->regionesAfectadas->isNotEmpty())
+                            <ul class="text-sm text-gray-700 list-disc list-inside mb-2">
+                                @foreach ($consulta->regionesAfectadas as $region)
+                                    <li>{{ $region->numero }}. {{ $region->nombre }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-sm text-gray-400 mb-2">Sin patología aparente.</p>
+                        @endif
+                        <p class="whitespace-pre-wrap text-sm">{{ $consulta->examen_estomatognatico }}</p>
                     </div>
 
                     @if ($consulta->profesional)
