@@ -6,36 +6,56 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 space-y-6">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-                    <div class="border-b pb-4">
-                        <h3 class="text-lg font-bold">Datos Generales</h3>
-                        <p><strong>Fecha de Apertura:</strong> {{ \Carbon\Carbon::parse($historiaClinica->hcl_fecha_apertura)->format('d/m/Y') }}</p>
-                    </div>
-
-                    <div class="border-b pb-4">
-                        <h3 class="text-lg font-bold">Antecedentes Personales</h3>
-                        <p class="whitespace-pre-wrap">{{ $historiaClinica->hcl_antecedentes_personales ?? 'No registrados.' }}</p>
-                    </div>
-
-                    <div class="border-b pb-4">
-                        <h3 class="text-lg font-bold">Antecedentes Familiares</h3>
-                        <p class="whitespace-pre-wrap">{{ $historiaClinica->hcl_antecedentes_familiares ?? 'No registrados.' }}</p>
-                    </div>
-
-                    <div class="border-b pb-4">
-                        <h3 class="text-lg font-bold">Examen Clínico General</h3>
-                        <p class="whitespace-pre-wrap">{{ $historiaClinica->hcl_examen_clinico_general ?? 'No registrado.' }}</p>
-                    </div>
-
-                    <div class="flex justify-end mt-6">
-                         <a href="{{ route('pacientes.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-md">
-                            Volver a Pacientes
-                        </a>
-                    </div>
+            @if (session('status') || session('success') || session('info'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">{{ session('status') ?? session('success') ?? session('info') }}</span>
                 </div>
+            @endif
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-bold">Datos generales</h3>
+                        <p class="text-sm text-gray-600">
+                            Abierta el {{ $historiaClinica->fecha_apertura->format('d/m/Y') }}
+                        </p>
+                    </div>
+                    <a href="{{ route('consultas.create', $historiaClinica) }}"
+                        class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
+                        + Registrar consulta
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <h3 class="text-lg font-bold mb-4">Consultas</h3>
+
+                    @forelse ($historiaClinica->consultas as $consulta)
+                        <a href="{{ route('consultas.show', $consulta) }}"
+                            class="block border rounded-md p-4 mb-3 hover:bg-gray-50 transition">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-medium">{{ $consulta->fecha->format('d/m/Y') }}</p>
+                                    <p class="text-sm text-gray-600 mt-1 line-clamp-2">{{ $consulta->motivo_consulta }}</p>
+                                </div>
+                                @if ($consulta->profesional)
+                                    <span class="text-xs text-gray-500 whitespace-nowrap ml-4">{{ $consulta->profesional->name }}</span>
+                                @endif
+                            </div>
+                        </a>
+                    @empty
+                        <p class="text-gray-500 text-sm">Todavía no hay consultas registradas.</p>
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <a href="{{ route('pacientes.show', $historiaClinica->paciente) }}" class="text-sm text-gray-600 hover:text-gray-900">
+                    Volver al perfil del paciente
+                </a>
             </div>
         </div>
     </div>

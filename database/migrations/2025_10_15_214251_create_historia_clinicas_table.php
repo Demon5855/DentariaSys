@@ -7,17 +7,20 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     /**
      * Run the migrations.
+     *
+     * `historia_clinicas` es la carpeta del paciente: se abre una sola vez.
+     * Los datos que cambian en cada visita (motivo de consulta, antecedentes,
+     * examen del sistema estomatognático) viven en `consultas`, no aquí.
      */
     public function up(): void
     {
         Schema::create('historia_clinicas', function (Blueprint $table) {
-            $table->id('hcl_id');
-            $table->unsignedBigInteger('hcl_pac_id')->unique();
-            $table->foreign('hcl_pac_id')->references('pac_id')->on('pacientes')->onDelete('cascade');
-            $table->date('hcl_fecha_apertura');
-            $table->text('hcl_antecedentes_personales')->nullable();
-            $table->text('hcl_antecedentes_familiares')->nullable();
-            $table->text('hcl_examen_clinico_general')->nullable();
+            $table->id();
+            $table->foreignId('paciente_id')
+                ->unique()
+                ->constrained('pacientes')
+                ->cascadeOnDelete();
+            $table->date('fecha_apertura');
             $table->timestamps();
         });
     }
