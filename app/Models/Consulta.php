@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Auditable as AuditingTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Consulta extends Model
+class Consulta extends Model implements Auditable
 {
-    use HasFactory;
+    use HasFactory, AuditingTrait;
 
     protected $fillable = [
         'historia_clinica_id',

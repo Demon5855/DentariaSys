@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use OwenIt\Auditing\Auditable as AuditingTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class HistoriaClinica extends Model
+class HistoriaClinica extends Model implements Auditable
 {
-    use HasFactory;
+    use HasFactory, AuditingTrait;
 
     protected $fillable = [
         'paciente_id',

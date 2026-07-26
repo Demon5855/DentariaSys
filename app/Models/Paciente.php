@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use OwenIt\Auditing\Auditable as AuditingTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Paciente extends Model
+class Paciente extends Model implements Auditable
 {
-    use HasFactory;
+    use HasFactory, AuditingTrait;
 
     protected $fillable = [
         'primer_nombre',
