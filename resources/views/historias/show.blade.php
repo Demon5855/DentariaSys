@@ -20,13 +20,25 @@
                         <h3 class="text-lg font-bold">Datos generales</h3>
                         <p class="text-sm text-gray-600">
                             Abierta el {{ $historiaClinica->fecha_apertura->format('d/m/Y') }}
+                            · Vigencia {{ ucfirst($historiaClinica->tipo_vigencia) }}
+                            · Vence {{ $historiaClinica->fecha_vencimiento->format('d/m/Y') }}
                         </p>
+                        <span class="inline-block mt-1 text-xs font-medium px-2.5 py-0.5 rounded-full {{ $historiaClinica->esta_vencida ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                            {{ $historiaClinica->esta_vencida ? 'Vencida' : 'Vigente' }}
+                        </span>
                     </div>
                     @can('consultas.crear')
-                        <a href="{{ route('consultas.create', $historiaClinica) }}"
-                            class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
-                            + Registrar consulta
-                        </a>
+                        @if (!$historiaClinica->esta_vencida)
+                            <a href="{{ route('consultas.create', $historiaClinica) }}"
+                                class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
+                                + Registrar consulta
+                            </a>
+                        @else
+                            <a href="{{ route('historias.create', $historiaClinica->paciente) }}"
+                                class="inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-md shadow-sm">
+                                Abrir historia nueva
+                            </a>
+                        @endif
                     @endcan
                 </div>
             </div>

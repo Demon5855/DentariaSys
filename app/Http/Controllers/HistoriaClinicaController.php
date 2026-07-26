@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreHistoriaClinicaRequest;
 use App\Models\HistoriaClinica;
 use App\Models\Paciente;
+use Carbon\Carbon;
 
 class HistoriaClinicaController extends Controller
 {
@@ -12,26 +13,37 @@ class HistoriaClinicaController extends Controller
     {
         $this->authorize('create', HistoriaClinica::class);
 
-        if ($paciente->historiaClinica) {
+        if ($vigente = $paciente->historiaClinicaVigente) {
             return redirect()
-                ->route('historias.show', $paciente->historiaClinica)
-                ->with('info', 'Este paciente ya tiene una historia clínica.');
+                ->route('historias.show', $vigente)
+                ->with('info', 'Este paciente ya tiene una historia clínica vigente.');
         }
 
-        return view('historias.create', compact('paciente'));
+        $anterior = $paciente->historiaClinicaMasReciente;
+
+        return view('historias.create', compact('paciente', 'anterior'));
     }
 
     public function store(StoreHistoriaClinicaRequest $request, Paciente $paciente)
     {
         $this->authorize('create', HistoriaClinica::class);
 
-        if ($paciente->historiaClinica) {
+        if ($vigente = $paciente->historiaClinicaVigente) {
             return redirect()
-                ->route('historias.show', $paciente->historiaClinica)
-                ->with('info', 'Este paciente ya tiene una historia clínica.');
+                ->route('historias.show', $vigente)
+                ->with('info', 'Este paciente ya tiene una historia clínica vigente.');
         }
 
-        $historiaClinica = $paciente->historiaClinica()->create($request->validated());
+        $datos = $request->validated();
+
+        $datos['fecha_vencimiento'] = HistoriaClinica::calcularFechaVencimiento(
+            $datos['tipo_vigencia'],
+            Carbon::parse($datos['fecha_apertura']),
+            isset($datos['fecha_probable_parto']) ? Carbon::parse($datos['fecha_probable_parto']) : null,
+            isset($datos['fecha_fin_periodo_lectivo']) ? Carbon::parse($datos['fecha_fin_periodo_lectivo']) : null,
+        );
+
+        $historiaClinica = $paciente->historiasClinicas()->create($datos);
 
         return redirect()
             ->route('consultas.create', $historiaClinica)

@@ -12,6 +12,12 @@ class ConsultaController extends Controller
     {
         $this->authorize('create', Consulta::class);
 
+        if ($historiaClinica->esta_vencida) {
+            return redirect()
+                ->route('historias.show', $historiaClinica)
+                ->with('info', 'Esta historia clínica venció. Abre una nueva desde el perfil del paciente.');
+        }
+
         $historiaClinica->load('paciente');
 
         return view('consultas.create', compact('historiaClinica'));
@@ -20,6 +26,12 @@ class ConsultaController extends Controller
     public function store(StoreConsultaRequest $request, HistoriaClinica $historiaClinica)
     {
         $this->authorize('create', Consulta::class);
+
+        if ($historiaClinica->esta_vencida) {
+            return redirect()
+                ->route('historias.show', $historiaClinica)
+                ->with('info', 'Esta historia clínica venció. Abre una nueva desde el perfil del paciente.');
+        }
 
         $historiaClinica->consultas()->create(
             $request->validated() + ['profesional_id' => $request->user()?->id]
