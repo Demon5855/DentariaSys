@@ -68,7 +68,7 @@ class Odontograma extends Model
     /**
      * Calcula CPO-D / ceo-d desde piezas YA GUARDADAS (con sus hallazgos
      * cargados). Se usa tanto al firmar (para congelar el resultado en las
-     * columnas cpod_*/ceod_*) como para verificación posterior.
+     * columnas cpod_c/p/o y ceod_c/e/o) como para verificación posterior.
      *
      * Precedencia MSP: Pérdida > Cariada > Obturada. Prótesis total no
      * cuenta terceros molares.
