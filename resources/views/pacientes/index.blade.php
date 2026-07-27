@@ -101,7 +101,7 @@
                                                     </a>
                                                 @elseif (auth()->user()->can('historias.abrir'))
                                                     <a href="{{ route('historias.create', $paciente) }}"
-                                                        class="text-blue-600 hover:text-blue-900">
+                                                        class="text-brand-600 hover:text-brand-900">
                                                         + Crear Historia
                                                     </a>
                                                 @else

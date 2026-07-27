@@ -102,7 +102,7 @@
                             @if (!$paciente->historiaClinicaVigente)
                                 @can('historias.abrir')
                                     <a href="{{ route('historias.create', $paciente) }}"
-                                        class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md">
+                                        class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-md">
                                         + Abrir historia clínica
                                     </a>
                                 @endcan

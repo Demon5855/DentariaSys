@@ -57,7 +57,7 @@
                             @can('odontogramas.crear')
                                 @if (!$historiaClinica->esta_vencida)
                                     <a href="{{ route('odontogramas.create', $historiaClinica) }}"
-                                        class="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-md shadow-sm">
+                                        class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-md shadow-sm">
                                         + Registrar odontograma
                                     </a>
                                 @endif
