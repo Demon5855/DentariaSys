@@ -74,6 +74,26 @@
                         <p class="whitespace-pre-wrap text-sm">{{ $consulta->examen_estomatognatico }}</p>
                     </div>
 
+                    <div class="border-b pb-4">
+                        <h3 class="text-lg font-bold mb-2">Diagnóstico</h3>
+                        @forelse ($consulta->diagnosticos as $diagnostico)
+                            <div class="flex justify-between items-start border rounded-md p-3 mb-2">
+                                <div>
+                                    <p class="text-sm font-medium">
+                                        {{ $diagnostico->cie10->codigo }} — {{ $diagnostico->cie10->descripcion }}
+                                    </p>
+                                    <p class="text-sm text-gray-600 mt-1">{{ $diagnostico->descripcion }}</p>
+                                </div>
+                                <span class="text-xs font-medium px-2.5 py-0.5 rounded-full whitespace-nowrap
+                                    {{ $diagnostico->estado === 'definitivo' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' }}">
+                                    {{ $diagnostico->estado === 'definitivo' ? 'DEF' : 'PRE' }}
+                                </span>
+                            </div>
+                        @empty
+                            <p class="text-sm text-gray-400">Sin diagnóstico registrado en esta consulta.</p>
+                        @endforelse
+                    </div>
+
                     @if ($consulta->profesional)
                         <p class="text-sm text-gray-500">Registrado por {{ $consulta->profesional->name }}</p>
                     @endif

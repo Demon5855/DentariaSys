@@ -9,7 +9,8 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form action="{{ route('consultas.store', $historiaClinica) }}" method="POST">
+                    <form action="{{ route('consultas.store', $historiaClinica) }}" method="POST"
+                        x-data="{ diagnosticos: {{ old('diagnosticos') ? \Illuminate\Support\Js::from(old('diagnosticos')) : '[]' }} }">
                         @csrf
                         <div class="space-y-6">
 
@@ -127,6 +128,59 @@
                                     placeholder="Sin patología aparente"
                                     class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('examen_estomatognatico') }}</textarea>
                                 <x-input-error :messages="$errors->get('examen_estomatognatico')" class="mt-2" />
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <x-input-label value="Diagnóstico (CIE-10)" />
+                                    <button type="button" @click="diagnosticos.push({diagnostico_cie10_id: '', descripcion: '', estado: 'presuntivo'})"
+                                        class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">
+                                        + Agregar diagnóstico
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-3">
+                                    El orden en que los agregues aquí queda como el orden de complejidad/urgencia
+                                    del diagnóstico, según tu criterio clínico.
+                                </p>
+
+                                <template x-for="(diagnostico, index) in diagnosticos" :key="index">
+                                    <div class="border rounded-md p-3 mb-3 bg-gray-50">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="text-xs text-gray-500">Código CIE-10</label>
+                                                <select :name="`diagnosticos[${index}][diagnostico_cie10_id]`"
+                                                    x-model="diagnostico.diagnostico_cie10_id" required
+                                                    class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                                    <option value="">Selecciona un código</option>
+                                                    @foreach ($codigosCie10 as $codigo)
+                                                        <option value="{{ $codigo->id }}">{{ $codigo->codigo }} — {{ $codigo->descripcion }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="text-xs text-gray-500">Estado</label>
+                                                <select :name="`diagnosticos[${index}][estado]`" x-model="diagnostico.estado" required
+                                                    class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                                    <option value="presuntivo">Presuntivo (PRE)</option>
+                                                    <option value="definitivo">Definitivo (DEF)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <label class="text-xs text-gray-500">Descripción</label>
+                                            <textarea :name="`diagnosticos[${index}][descripcion]`" x-model="diagnostico.descripcion" rows="2" required
+                                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+                                        </div>
+                                        <button type="button" @click="diagnosticos.splice(index, 1)"
+                                            class="text-xs text-red-600 hover:text-red-900 mt-2">
+                                            Quitar este diagnóstico
+                                        </button>
+                                    </div>
+                                </template>
+
+                                <p x-show="diagnosticos.length === 0" class="text-sm text-gray-400">
+                                    Sin diagnósticos agregados todavía.
+                                </p>
+                                <x-input-error :messages="$errors->get('diagnosticos')" class="mt-2" />
                             </div>
                         </div>
 

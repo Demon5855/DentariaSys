@@ -48,6 +48,15 @@ class StoreConsultaRequest extends FormRequest
             'regiones_afectadas' => ['nullable', 'array'],
             'regiones_afectadas.*' => ['integer', 'exists:regiones_estomatognaticas,id'],
             'examen_estomatognatico' => ['nullable', 'string'],
+
+            // Sección M: uno o más diagnósticos, cada uno con su código
+            // CIE, descripción y estado (presuntivo/definitivo). El orden
+            // en que llegan en el array define 'orden' — el instructivo
+            // deja ese orden al criterio del profesional.
+            'diagnosticos' => ['nullable', 'array'],
+            'diagnosticos.*.diagnostico_cie10_id' => ['required', 'integer', 'exists:diagnosticos_cie10,id'],
+            'diagnosticos.*.descripcion' => ['required', 'string'],
+            'diagnosticos.*.estado' => ['required', 'in:presuntivo,definitivo'],
         ];
     }
 

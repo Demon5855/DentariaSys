@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use OwenIt\Auditing\Auditable as AuditingTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -82,5 +83,15 @@ class Consulta extends Model implements Auditable
             'consulta_id',
             'region_estomatognatica_id'
         )->orderBy('numero');
+    }
+
+    /**
+     * Sección M: varios diagnósticos por consulta, ordenados según el
+     * criterio del profesional (complejidad/urgencia), no por fecha de
+     * registro.
+     */
+    public function diagnosticos(): HasMany
+    {
+        return $this->hasMany(Diagnostico::class)->orderBy('orden');
     }
 }
