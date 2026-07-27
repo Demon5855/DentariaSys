@@ -94,4 +94,13 @@ class Consulta extends Model implements Auditable
     {
         return $this->hasMany(Diagnostico::class)->orderBy('orden');
     }
+
+    /**
+     * Sección O: uno o más tratamientos por consulta, en el orden en que
+     * se registraron durante la visita.
+     */
+    public function tratamientos(): HasMany
+    {
+        return $this->hasMany(Tratamiento::class)->orderBy('orden');
+    }
 }

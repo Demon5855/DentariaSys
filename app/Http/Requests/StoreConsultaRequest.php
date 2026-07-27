@@ -57,6 +57,14 @@ class StoreConsultaRequest extends FormRequest
             'diagnosticos.*.diagnostico_cie10_id' => ['required', 'integer', 'exists:diagnosticos_cie10,id'],
             'diagnosticos.*.descripcion' => ['required', 'string'],
             'diagnosticos.*.estado' => ['required', 'in:presuntivo,definitivo'],
+
+            // Sección O: uno o más tratamientos realizados en esta visita.
+            'tratamientos' => ['nullable', 'array'],
+            'tratamientos.*.diagnostico_complicaciones' => ['nullable', 'string'],
+            'tratamientos.*.procedimiento' => ['required', 'string'],
+            'tratamientos.*.prescripciones' => ['nullable', 'string'],
+            'tratamientos.*.proxima_cita' => ['nullable', 'date', 'after:fecha'],
+            'tratamientos.*.estado' => ['required', 'in:en_tratamiento,alta'],
         ];
     }
 

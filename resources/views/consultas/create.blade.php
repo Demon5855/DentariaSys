@@ -9,8 +9,23 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+
+                    @if ($errors->any())
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                            <p class="font-bold mb-1">Revisa lo siguiente:</p>
+                            <ul class="list-disc list-inside text-sm">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <form action="{{ route('consultas.store', $historiaClinica) }}" method="POST"
-                        x-data="{ diagnosticos: {{ old('diagnosticos') ? \Illuminate\Support\Js::from(old('diagnosticos')) : '[]' }} }">
+                        x-data="{
+                            diagnosticos: {{ old('diagnosticos') ? \Illuminate\Support\Js::from(old('diagnosticos')) : '[]' }},
+                            tratamientos: {{ old('tratamientos') ? \Illuminate\Support\Js::from(old('tratamientos')) : '[]' }}
+                        }">
                         @csrf
                         <div class="space-y-6">
 
@@ -181,6 +196,60 @@
                                     Sin diagnósticos agregados todavía.
                                 </p>
                                 <x-input-error :messages="$errors->get('diagnosticos')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <x-input-label value="Tratamiento realizado en esta visita" />
+                                    <button type="button" @click="tratamientos.push({procedimiento: '', diagnostico_complicaciones: '', prescripciones: '', proxima_cita: '', estado: 'en_tratamiento'})"
+                                        class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">
+                                        + Agregar tratamiento
+                                    </button>
+                                </div>
+
+                                <template x-for="(tratamiento, index) in tratamientos" :key="index">
+                                    <div class="border rounded-md p-3 mb-3 bg-gray-50">
+                                        <div>
+                                            <label class="text-xs text-gray-500">Diagnóstico / complicaciones (opcional)</label>
+                                            <textarea :name="`tratamientos[${index}][diagnostico_complicaciones]`" x-model="tratamiento.diagnostico_complicaciones" rows="2"
+                                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+                                        </div>
+                                        <div class="mt-2">
+                                            <label class="text-xs text-gray-500">Procedimiento realizado, según protocolo</label>
+                                            <textarea :name="`tratamientos[${index}][procedimiento]`" x-model="tratamiento.procedimiento" rows="2" required
+                                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+                                        </div>
+                                        <div class="mt-2">
+                                            <label class="text-xs text-gray-500">Prescripciones (fármaco, forma, cantidad, vía, frecuencia)</label>
+                                            <textarea :name="`tratamientos[${index}][prescripciones]`" x-model="tratamiento.prescripciones" rows="2"
+                                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                                            <div>
+                                                <label class="text-xs text-gray-500">Estado</label>
+                                                <select :name="`tratamientos[${index}][estado]`" x-model="tratamiento.estado" required
+                                                    class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                                    <option value="en_tratamiento">En tratamiento (continúa)</option>
+                                                    <option value="alta">Alta (tratamiento terminado)</option>
+                                                </select>
+                                            </div>
+                                            <div x-show="tratamiento.estado === 'en_tratamiento'">
+                                                <label class="text-xs text-gray-500">Próxima cita</label>
+                                                <input type="date" :name="`tratamientos[${index}][proxima_cita]`" x-model="tratamiento.proxima_cita"
+                                                    class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                            </div>
+                                        </div>
+                                        <button type="button" @click="tratamientos.splice(index, 1)"
+                                            class="text-xs text-red-600 hover:text-red-900 mt-2">
+                                            Quitar este tratamiento
+                                        </button>
+                                    </div>
+                                </template>
+
+                                <p x-show="tratamientos.length === 0" class="text-sm text-gray-400">
+                                    Sin tratamientos agregados en esta visita.
+                                </p>
+                                <x-input-error :messages="$errors->get('tratamientos')" class="mt-2" />
                             </div>
                         </div>
 

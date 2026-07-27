@@ -50,6 +50,7 @@ class ConsultaController extends Controller
         $antecedentesFamiliares = Arr::pull($datos, 'antecedentes_familiares_marcados', []);
         $regionesAfectadas = Arr::pull($datos, 'regiones_afectadas', []);
         $diagnosticos = Arr::pull($datos, 'diagnosticos', []);
+        $tratamientos = Arr::pull($datos, 'tratamientos', []);
 
         $consulta = $historiaClinica->consultas()->create(
             $datos + ['profesional_id' => $request->user()?->id]
@@ -79,6 +80,18 @@ class ConsultaController extends Controller
             ]);
         }
 
+        foreach (array_values($tratamientos) as $posicion => $tratamiento) {
+            $consulta->tratamientos()->create([
+                'profesional_id' => $request->user()?->id,
+                'diagnostico_complicaciones' => $tratamiento['diagnostico_complicaciones'] ?? null,
+                'procedimiento' => $tratamiento['procedimiento'],
+                'prescripciones' => $tratamiento['prescripciones'] ?? null,
+                'proxima_cita' => $tratamiento['proxima_cita'] ?? null,
+                'estado' => $tratamiento['estado'],
+                'orden' => $posicion,
+            ]);
+        }
+
         return redirect()
             ->route('historias.show', $historiaClinica)
             ->with('success', 'Consulta registrada exitosamente.');
@@ -95,6 +108,7 @@ class ConsultaController extends Controller
             'antecedentesFamiliaresMarcados',
             'regionesAfectadas',
             'diagnosticos.cie10',
+            'tratamientos.profesional',
         );
 
         return view('consultas.show', compact('consulta'));

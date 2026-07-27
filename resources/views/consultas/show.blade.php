@@ -94,6 +94,35 @@
                         @endforelse
                     </div>
 
+                    <div class="border-b pb-4">
+                        <h3 class="text-lg font-bold mb-2">Tratamiento</h3>
+                        @forelse ($consulta->tratamientos as $tratamiento)
+                            <div class="border rounded-md p-3 mb-2">
+                                <div class="flex justify-between items-start mb-1">
+                                    <span class="text-xs font-medium px-2.5 py-0.5 rounded-full
+                                        {{ $tratamiento->estado === 'alta' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
+                                        {{ $tratamiento->estado === 'alta' ? 'ALTA' : 'En tratamiento' }}
+                                    </span>
+                                    @if ($tratamiento->proxima_cita)
+                                        <span class="text-xs text-gray-500">Próxima cita: {{ $tratamiento->proxima_cita->format('d/m/Y') }}</span>
+                                    @endif
+                                </div>
+                                @if ($tratamiento->diagnostico_complicaciones)
+                                    <p class="text-xs text-gray-500 mb-1">{{ $tratamiento->diagnostico_complicaciones }}</p>
+                                @endif
+                                <p class="text-sm">{{ $tratamiento->procedimiento }}</p>
+                                @if ($tratamiento->prescripciones)
+                                    <p class="text-sm text-gray-600 mt-1"><span class="text-xs text-gray-500">Prescripciones:</span> {{ $tratamiento->prescripciones }}</p>
+                                @endif
+                                @if ($tratamiento->profesional)
+                                    <p class="text-xs text-gray-400 mt-1">{{ $tratamiento->profesional->name }}</p>
+                                @endif
+                            </div>
+                        @empty
+                            <p class="text-sm text-gray-400">Sin tratamiento registrado en esta consulta.</p>
+                        @endforelse
+                    </div>
+
                     @if ($consulta->profesional)
                         <p class="text-sm text-gray-500">Registrado por {{ $consulta->profesional->name }}</p>
                     @endif
