@@ -17,6 +17,12 @@
                         {{ __('Pacientes') }}
                     </x-nav-link>
 
+                    @can('citas.ver')
+                        <x-nav-link :href="route('citas.index')" :active="request()->routeIs('citas.*')">
+                            {{ __('Agenda') }}
+                        </x-nav-link>
+                    @endcan
+
                     @can('usuarios.gestionar')
                         <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                             {{ __('Usuarios') }}
@@ -74,6 +80,12 @@
             <x-responsive-nav-link :href="route('pacientes.index')" :active="request()->routeIs('pacientes.*')">
                 {{ __('Pacientes') }}
             </x-responsive-nav-link>
+
+            @can('citas.ver')
+                <x-responsive-nav-link :href="route('citas.index')" :active="request()->routeIs('citas.*')">
+                    {{ __('Agenda') }}
+                </x-responsive-nav-link>
+            @endcan
 
             @can('usuarios.gestionar')
                 <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
