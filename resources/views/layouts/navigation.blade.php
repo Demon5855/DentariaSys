@@ -23,6 +23,12 @@
                         </x-nav-link>
                     @endcan
 
+                    @can('inventario.ver')
+                        <x-nav-link :href="route('productos.index')" :active="request()->routeIs('productos.*') || request()->routeIs('lotes.*') || request()->routeIs('movimientos.*')">
+                            {{ __('Inventario') }}
+                        </x-nav-link>
+                    @endcan
+
                     @can('usuarios.gestionar')
                         <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                             {{ __('Usuarios') }}
@@ -84,6 +90,12 @@
             @can('citas.ver')
                 <x-responsive-nav-link :href="route('citas.index')" :active="request()->routeIs('citas.*')">
                     {{ __('Agenda') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('inventario.ver')
+                <x-responsive-nav-link :href="route('productos.index')" :active="request()->routeIs('productos.*')">
+                    {{ __('Inventario') }}
                 </x-responsive-nav-link>
             @endcan
 

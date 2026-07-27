@@ -114,6 +114,11 @@
                                 @if ($tratamiento->prescripciones)
                                     <p class="text-sm text-gray-600 mt-1"><span class="text-xs text-gray-500">Prescripciones:</span> {{ $tratamiento->prescripciones }}</p>
                                 @endif
+                                @if ($tratamiento->productos->isNotEmpty())
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        Insumos: {{ $tratamiento->productos->map(fn ($p) => "{$p->nombre} x{$p->pivot->cantidad}")->implode(', ') }}
+                                    </p>
+                                @endif
                                 @if ($tratamiento->profesional)
                                     <p class="text-xs text-gray-400 mt-1">{{ $tratamiento->profesional->name }}</p>
                                 @endif

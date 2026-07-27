@@ -201,7 +201,7 @@
                             <div>
                                 <div class="flex justify-between items-center mb-2">
                                     <x-input-label value="Tratamiento realizado en esta visita" />
-                                    <button type="button" @click="tratamientos.push({procedimiento: '', diagnostico_complicaciones: '', prescripciones: '', proxima_cita: '', estado: 'en_tratamiento'})"
+                                    <button type="button" @click="tratamientos.push({procedimiento: '', diagnostico_complicaciones: '', prescripciones: '', proxima_cita: '', estado: 'en_tratamiento', productos: []})"
                                         class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">
                                         + Agregar tratamiento
                                     </button>
@@ -239,6 +239,32 @@
                                                     class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
                                             </div>
                                         </div>
+
+                                        <div class="mt-3 pt-3 border-t">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <label class="text-xs text-gray-500">Insumos consumidos (opcional)</label>
+                                                <button type="button" @click="(tratamiento.productos ??= []).push({producto_id: '', cantidad: 1})"
+                                                    class="text-xs text-indigo-600 hover:text-indigo-900">+ Agregar insumo</button>
+                                            </div>
+                                            <template x-for="(insumo, indiceInsumo) in (tratamiento.productos || [])" :key="indiceInsumo">
+                                                <div class="flex gap-2 items-center mb-1">
+                                                    <select :name="`tratamientos[${index}][productos][${indiceInsumo}][producto_id]`"
+                                                        x-model="insumo.producto_id" required
+                                                        class="flex-1 border-gray-300 rounded-md shadow-sm text-sm">
+                                                        <option value="">Selecciona un producto</option>
+                                                        @foreach ($productos as $producto)
+                                                            <option value="{{ $producto->id }}">{{ $producto->nombre }} ({{ $producto->unidad_medida }})</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <input type="number" min="1" :name="`tratamientos[${index}][productos][${indiceInsumo}][cantidad]`"
+                                                        x-model="insumo.cantidad" required
+                                                        class="w-20 border-gray-300 rounded-md shadow-sm text-sm">
+                                                    <button type="button" @click="tratamiento.productos.splice(indiceInsumo, 1)"
+                                                        class="text-xs text-red-600 hover:text-red-900">✕</button>
+                                                </div>
+                                            </template>
+                                        </div>
+
                                         <button type="button" @click="tratamientos.splice(index, 1)"
                                             class="text-xs text-red-600 hover:text-red-900 mt-2">
                                             Quitar este tratamiento
