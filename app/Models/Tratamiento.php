@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use OwenIt\Auditing\Auditable as AuditingTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -38,5 +39,17 @@ class Tratamiento extends Model implements Auditable
     public function profesional(): BelongsTo
     {
         return $this->belongsTo(User::class, 'profesional_id');
+    }
+
+    /**
+     * Insumos consumidos por este tratamiento. La cantidad vive en el
+     * pivote; el descuento de stock real (con FIFO/FEFO) ya ocurrió al
+     * guardarse — esta relación es para CONSULTAR qué se usó, no para
+     * volver a descontar.
+     */
+    public function productos(): BelongsToMany
+    {
+        return $this->belongsToMany(Producto::class, 'tratamiento_producto')
+            ->withPivot('cantidad');
     }
 }
