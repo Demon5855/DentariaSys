@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\HistoriaClinicaController;
+use App\Http\Controllers\HistoriaClinicaPdfController;
 use App\Http\Controllers\OdontogramaController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\ProfileController;
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::get('pacientes/{paciente}/historia/crear', [HistoriaClinicaController::class, 'create'])->name('historias.create');
     Route::post('pacientes/{paciente}/historia', [HistoriaClinicaController::class, 'store'])->name('historias.store');
     Route::get('historias/{historiaClinica}', [HistoriaClinicaController::class, 'show'])->name('historias.show');
+    Route::get('historias/{historiaClinica}/pdf', [HistoriaClinicaPdfController::class, 'exportar'])->name('historias.pdf');
 
     // Rutas de Consultas (cada visita, cuelga de la historia clínica)
     Route::get('historias/{historiaClinica}/consultas/crear', [ConsultaController::class, 'create'])->name('consultas.create');

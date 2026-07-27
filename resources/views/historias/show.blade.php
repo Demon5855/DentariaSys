@@ -27,19 +27,25 @@
                             {{ $historiaClinica->esta_vencida ? 'Vencida' : 'Vigente' }}
                         </span>
                     </div>
-                    @can('consultas.crear')
-                        @if (!$historiaClinica->esta_vencida)
-                            <a href="{{ route('consultas.create', $historiaClinica) }}"
-                                class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
-                                + Registrar consulta
-                            </a>
-                        @else
-                            <a href="{{ route('historias.create', $historiaClinica->paciente) }}"
-                                class="inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-md shadow-sm">
-                                Abrir historia nueva
-                            </a>
-                        @endif
-                    @endcan
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('historias.pdf', $historiaClinica) }}" target="_blank"
+                            class="inline-flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white font-bold rounded-md shadow-sm">
+                            Descargar PDF
+                        </a>
+                        @can('consultas.crear')
+                            @if (!$historiaClinica->esta_vencida)
+                                <a href="{{ route('consultas.create', $historiaClinica) }}"
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
+                                    + Registrar consulta
+                                </a>
+                            @else
+                                <a href="{{ route('historias.create', $historiaClinica->paciente) }}"
+                                    class="inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-md shadow-sm">
+                                    Abrir historia nueva
+                                </a>
+                            @endif
+                        @endcan
+                    </div>
                 </div>
             </div>
 
