@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Antecedente;
+use App\Models\DiagnosticoCie10;
 use App\Models\HistoriaClinica;
 use App\Models\RegionEstomatognatica;
 use App\Models\User;
 use Database\Seeders\AntecedenteSeeder;
+use Database\Seeders\DiagnosticoCie10Seeder;
 use Database\Seeders\RegionEstomatognaticaSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,6 +24,7 @@ class ConsultaTest extends TestCase
         $this->seed(RoleSeeder::class);
         $this->seed(AntecedenteSeeder::class);
         $this->seed(RegionEstomatognaticaSeeder::class);
+        $this->seed(DiagnosticoCie10Seeder::class);
 
         $usuario = User::factory()->create();
         $usuario->assignRole('admin');
@@ -171,5 +174,62 @@ class ConsultaTest extends TestCase
         $this->assertCount(0, $consulta->antecedentesPersonalesMarcados);
         $this->assertCount(0, $consulta->antecedentesFamiliaresMarcados);
         $this->assertCount(0, $consulta->regionesAfectadas);
+    }
+
+    public function test_guarda_multiples_diagnosticos_conservando_el_orden(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+        $caries = DiagnosticoCie10::where('codigo', 'K02.9')->firstOrFail();
+        $pulpitis = DiagnosticoCie10::where('codigo', 'K04.0')->firstOrFail();
+
+        $this->post(route('consultas.store', $historiaClinica), [
+            'fecha' => now()->toDateString(),
+            'motivo_consulta' => 'Dolor dental',
+            'diagnosticos' => [
+                ['diagnostico_cie10_id' => $pulpitis->id, 'descripcion' => 'Pulpitis irreversible pieza 36', 'estado' => 'definitivo'],
+                ['diagnostico_cie10_id' => $caries->id, 'descripcion' => 'Caries secundaria', 'estado' => 'presuntivo'],
+            ],
+        ]);
+
+        $consulta = $historiaClinica->consultas()->first();
+        $diagnosticos = $consulta->diagnosticos;
+
+        $this->assertCount(2, $diagnosticos);
+        $this->assertSame($pulpitis->id, $diagnosticos[0]->diagnostico_cie10_id);
+        $this->assertSame('definitivo', $diagnosticos[0]->estado);
+        $this->assertSame($caries->id, $diagnosticos[1]->diagnostico_cie10_id);
+        $this->assertSame('presuntivo', $diagnosticos[1]->estado);
+    }
+
+    public function test_diagnostico_requiere_codigo_descripcion_y_estado(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+
+        $response = $this->post(route('consultas.store', $historiaClinica), [
+            'fecha' => now()->toDateString(),
+            'motivo_consulta' => 'Control',
+            'diagnosticos' => [
+                ['descripcion' => 'Falta el código CIE-10'],
+            ],
+        ]);
+
+        $response->assertSessionHasErrors([
+            'diagnosticos.0.diagnostico_cie10_id',
+            'diagnosticos.0.estado',
+        ]);
+        $this->assertDatabaseCount('diagnosticos', 0);
+    }
+
+    public function test_consulta_sin_diagnosticos_no_falla(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+
+        $response = $this->post(route('consultas.store', $historiaClinica), [
+            'fecha' => now()->toDateString(),
+            'motivo_consulta' => 'Control de rutina',
+        ]);
+
+        $response->assertRedirect(route('historias.show', $historiaClinica));
+        $this->assertDatabaseCount('diagnosticos', 0);
     }
 }
