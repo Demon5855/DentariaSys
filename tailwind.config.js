@@ -12,7 +12,30 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                display: ['Montserrat', ...defaultTheme.fontFamily.sans],
+            },
+            colors: {
+                brand: {
+                    // Verde Clínico — color principal del isotipo y acentos
+                    DEFAULT:  '#3B8E87',
+                    50:  '#eef7f6',
+                    100: '#d4edec',
+                    200: '#a9dbd9',
+                    300: '#7dc9c6',
+                    400: '#52b7b3',
+                    500: '#3B8E87',   // principal
+                    600: '#2e716b',
+                    700: '#225450',
+                    800: '#163835',
+                    900: '#0b1c1a',
+                },
+                ink: {
+                    // Gris Antracita — texto primario
+                    dark:    '#333333',
+                    // Gris Medio — texto secundario y cuerpo
+                    medium:  '#666666',
+                },
             },
         },
     },
