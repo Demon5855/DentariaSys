@@ -12,7 +12,7 @@
 
                     <div class="flex justify-between items-center mb-6">
                         <a href="{{ route('pacientes.create') }}"
-                            class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm transition ease-in-out duration-150">
+                            class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-md shadow-sm transition ease-in-out duration-150">
                             + Agregar Paciente
                         </a>
 
@@ -22,7 +22,7 @@
                                 <div class="relative">
                                     <input type="text" name="buscar" value="{{ request('buscar') }}"
                                         placeholder="Buscar paciente..."
-                                        class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
                                     <svg class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none"
                                         stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -49,7 +49,7 @@
                     <div class="border-b border-gray-200 mb-6">
                         <nav class="-mb-px flex space-x-8">
                             <a href="{{ route('pacientes.index', ['estado' => 'activos', 'buscar' => request('buscar')]) }}"
-                                class="py-2 px-1 border-b-2 font-medium text-sm {{ $estado === 'activos' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                                class="py-2 px-1 border-b-2 font-medium text-sm {{ $estado === 'activos' ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
                                 Pacientes Activos
                                 <span
                                     class="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
@@ -86,7 +86,7 @@
                                         class="border-b border-gray-200 hover:bg-gray-50">
                                         <td class="py-3 px-4 text-gray-600">{{ $paciente->numero_documento }}</td>
                                         <td class="py-3 px-4 font-medium">
-                                            <a href="{{ route('pacientes.show', $paciente) }}" class="hover:text-indigo-600 hover:underline">
+                                            <a href="{{ route('pacientes.show', $paciente) }}" class="hover:text-brand-600 hover:underline">
                                                 {{ $paciente->nombre_completo }}
                                             </a>
                                         </td>
@@ -114,7 +114,7 @@
                                             @if($estado === 'activos')
                                                 <div class="flex justify-center space-x-2">
                                                     <a href="{{ route('pacientes.edit', $paciente) }}"
-                                                        class="text-indigo-600 hover:text-indigo-900">Editar</a>
+                                                        class="text-brand-600 hover:text-brand-900">Editar</a>
                                                     <form action="{{ route('pacientes.destroy', $paciente) }}" method="POST"
                                                         onsubmit="return confirm('¿Desactivar paciente?');">
                                                         @csrf

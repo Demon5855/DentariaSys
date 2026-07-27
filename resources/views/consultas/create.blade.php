@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Nueva Consulta: <span class="text-indigo-600">{{ $historiaClinica->paciente->nombre_completo }}</span>
+            Nueva Consulta: <span class="text-brand-600">{{ $historiaClinica->paciente->nombre_completo }}</span>
         </h2>
     </x-slot>
 
@@ -39,14 +39,14 @@
                             <div>
                                 <x-input-label for="motivo_consulta" value="Motivo de consulta (palabras textuales del paciente)" />
                                 <textarea id="motivo_consulta" name="motivo_consulta" rows="2" required
-                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('motivo_consulta') }}</textarea>
+                                    class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">{{ old('motivo_consulta') }}</textarea>
                                 <x-input-error :messages="$errors->get('motivo_consulta')" class="mt-2" />
                             </div>
 
                             <div>
                                 <x-input-label for="enfermedad_actual" value="Enfermedad o problema actual" />
                                 <textarea id="enfermedad_actual" name="enfermedad_actual" rows="3"
-                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('enfermedad_actual') }}</textarea>
+                                    class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">{{ old('enfermedad_actual') }}</textarea>
                                 <x-input-error :messages="$errors->get('enfermedad_actual')" class="mt-2" />
                             </div>
 
@@ -58,7 +58,7 @@
                                             <label class="flex items-center gap-2 text-sm">
                                                 <input type="checkbox" name="antecedentes_personales_marcados[]" value="{{ $antecedente->id }}"
                                                     @checked(in_array($antecedente->id, old('antecedentes_personales_marcados', [])))
-                                                    class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                                    class="rounded border-gray-300 text-brand-600 focus:ring-brand-500">
                                                 {{ $antecedente->codigo }}. {{ $antecedente->nombre }}
                                             </label>
                                         @endforeach
@@ -68,7 +68,7 @@
                                     <x-input-label for="antecedentes_personales" value="Describir (ej: '1. Penicilina')" />
                                     <textarea id="antecedentes_personales" name="antecedentes_personales" rows="2"
                                         placeholder="No refiere antecedentes"
-                                        class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('antecedentes_personales') }}</textarea>
+                                        class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">{{ old('antecedentes_personales') }}</textarea>
                                     <x-input-error :messages="$errors->get('antecedentes_personales')" class="mt-2" />
                                 </div>
                                 <div>
@@ -79,7 +79,7 @@
                                             <label class="flex items-center gap-2 text-sm">
                                                 <input type="checkbox" name="antecedentes_familiares_marcados[]" value="{{ $antecedente->id }}"
                                                     @checked(in_array($antecedente->id, old('antecedentes_familiares_marcados', [])))
-                                                    class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                                    class="rounded border-gray-300 text-brand-600 focus:ring-brand-500">
                                                 {{ $antecedente->codigo }}. {{ $antecedente->nombre }}
                                             </label>
                                         @endforeach
@@ -89,7 +89,7 @@
                                     <x-input-label for="antecedentes_familiares" value="Describir" />
                                     <textarea id="antecedentes_familiares" name="antecedentes_familiares" rows="2"
                                         placeholder="No refiere antecedentes"
-                                        class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('antecedentes_familiares') }}</textarea>
+                                        class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">{{ old('antecedentes_familiares') }}</textarea>
                                     <x-input-error :messages="$errors->get('antecedentes_familiares')" class="mt-2" />
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                                         <label class="flex items-center gap-2 text-sm">
                                             <input type="checkbox" name="regiones_afectadas[]" value="{{ $region->id }}"
                                                 @checked(in_array($region->id, old('regiones_afectadas', [])))
-                                                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                                class="rounded border-gray-300 text-brand-600 focus:ring-brand-500">
                                             {{ $region->numero }}. {{ $region->nombre }}
                                         </label>
                                     @endforeach
@@ -141,14 +141,14 @@
                                 <x-input-label for="examen_estomatognatico" value="Describir hallazgo por región (ej: '5. Úlcera en borde lateral')" />
                                 <textarea id="examen_estomatognatico" name="examen_estomatognatico" rows="3"
                                     placeholder="Sin patología aparente"
-                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('examen_estomatognatico') }}</textarea>
+                                    class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">{{ old('examen_estomatognatico') }}</textarea>
                                 <x-input-error :messages="$errors->get('examen_estomatognatico')" class="mt-2" />
                             </div>
                             <div>
                                 <div class="flex justify-between items-center mb-2">
                                     <x-input-label value="Diagnóstico (CIE-10)" />
                                     <button type="button" @click="diagnosticos.push({diagnostico_cie10_id: '', descripcion: '', estado: 'presuntivo'})"
-                                        class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">
+                                        class="text-sm text-brand-600 hover:text-brand-900 font-medium">
                                         + Agregar diagnóstico
                                     </button>
                                 </div>
@@ -202,7 +202,7 @@
                                 <div class="flex justify-between items-center mb-2">
                                     <x-input-label value="Tratamiento realizado en esta visita" />
                                     <button type="button" @click="tratamientos.push({procedimiento: '', diagnostico_complicaciones: '', prescripciones: '', proxima_cita: '', estado: 'en_tratamiento', productos: []})"
-                                        class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">
+                                        class="text-sm text-brand-600 hover:text-brand-900 font-medium">
                                         + Agregar tratamiento
                                     </button>
                                 </div>
@@ -244,7 +244,7 @@
                                             <div class="flex justify-between items-center mb-1">
                                                 <label class="text-xs text-gray-500">Insumos consumidos (opcional)</label>
                                                 <button type="button" @click="(tratamiento.productos ??= []).push({producto_id: '', cantidad: 1})"
-                                                    class="text-xs text-indigo-600 hover:text-indigo-900">+ Agregar insumo</button>
+                                                    class="text-xs text-brand-600 hover:text-brand-900">+ Agregar insumo</button>
                                             </div>
                                             <template x-for="(insumo, indiceInsumo) in (tratamiento.productos || [])" :key="indiceInsumo">
                                                 <div class="flex gap-2 items-center mb-1">

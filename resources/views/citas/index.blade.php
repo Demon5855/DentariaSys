@@ -31,7 +31,7 @@
                         </div>
                         @can('citas.crear')
                             <a href="{{ route('citas.create') }}"
-                                class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
+                                class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-md shadow-sm">
                                 + Agendar cita
                             </a>
                         @endcan

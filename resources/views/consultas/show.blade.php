@@ -2,7 +2,7 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Consulta del {{ $consulta->fecha->format('d/m/Y') }}
-            — <span class="text-indigo-600">{{ $consulta->historiaClinica->paciente->nombre_completo }}</span>
+            — <span class="text-brand-600">{{ $consulta->historiaClinica->paciente->nombre_completo }}</span>
         </h2>
     </x-slot>
 

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Historia Clínica de: <span class="text-indigo-600">{{ $historiaClinica->paciente->nombre_completo }}</span>
+            Historia Clínica de: <span class="text-brand-600">{{ $historiaClinica->paciente->nombre_completo }}</span>
         </h2>
     </x-slot>
 
@@ -35,7 +35,7 @@
                         @can('consultas.crear')
                             @if (!$historiaClinica->esta_vencida)
                                 <a href="{{ route('consultas.create', $historiaClinica) }}"
-                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
+                                    class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-md shadow-sm">
                                     + Registrar consulta
                                 </a>
                             @else

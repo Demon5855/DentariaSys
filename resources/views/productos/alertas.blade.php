@@ -13,7 +13,7 @@
 
                     @forelse ($bajoMinimo as $producto)
                         <div class="flex justify-between items-center border rounded-md p-3 mb-2">
-                            <a href="{{ route('productos.show', $producto) }}" class="text-sm text-indigo-600 hover:underline">{{ $producto->nombre }}</a>
+                            <a href="{{ route('productos.show', $producto) }}" class="text-sm text-brand-600 hover:underline">{{ $producto->nombre }}</a>
                             <span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">
                                 {{ $producto->stock_total }} / {{ $producto->stock_minimo }} mínimo
                             </span>
@@ -32,7 +32,7 @@
                     @forelse ($porVencer as $lote)
                         <div class="flex justify-between items-center border rounded-md p-3 mb-2">
                             <div>
-                                <a href="{{ route('productos.show', $lote->producto) }}" class="text-sm text-indigo-600 hover:underline">{{ $lote->producto->nombre }}</a>
+                                <a href="{{ route('productos.show', $lote->producto) }}" class="text-sm text-brand-600 hover:underline">{{ $lote->producto->nombre }}</a>
                                 <span class="text-xs text-gray-500">{{ $lote->numero_lote ? '· Lote '.$lote->numero_lote : '' }} · {{ $lote->cantidad_actual }} {{ $lote->producto->unidad_medida }}(s)</span>
                             </div>
                             <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">

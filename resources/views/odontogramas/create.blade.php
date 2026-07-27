@@ -2,7 +2,7 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Odontograma ({{ $tipoSugerido === 'inicial' ? 'Inicial' : 'Evolutivo' }}):
-            <span class="text-indigo-600">{{ $historiaClinica->paciente->nombre_completo }}</span>
+            <span class="text-brand-600">{{ $historiaClinica->paciente->nombre_completo }}</span>
         </h2>
     </x-slot>
 
@@ -184,7 +184,7 @@
                                     Al firmar, este odontograma queda bloqueado. Las correcciones se hacen
                                     registrando uno nuevo, de tipo evolutivo.
                                 </p>
-                                <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
+                                <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-md shadow-sm">
                                     Firmar odontograma
                                 </button>
                                 <a href="{{ route('historias.show', $historiaClinica) }}" class="block text-center text-sm text-gray-600 hover:text-gray-900 mt-3">Cancelar</a>

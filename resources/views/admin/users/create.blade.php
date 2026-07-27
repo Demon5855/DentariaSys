@@ -27,7 +27,7 @@
                             <div>
                                 <x-input-label for="role" value="Rol" />
                                 <select id="role" name="role" required
-                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">
                                     <option value="">Selecciona un rol</option>
                                     @foreach ($roles as $rol)
                                         <option value="{{ $rol }}" @selected(old('role') === $rol)>{{ $rol }}</option>

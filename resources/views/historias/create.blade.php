@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Abrir Historia Clínica para: <span class="text-indigo-600">{{ $paciente->nombre_completo }}</span>
+            Abrir Historia Clínica para: <span class="text-brand-600">{{ $paciente->nombre_completo }}</span>
         </h2>
     </x-slot>
 
@@ -39,7 +39,7 @@
                             <div>
                                 <x-input-label for="tipo_vigencia" value="Vigencia de esta historia" />
                                 <select id="tipo_vigencia" name="tipo_vigencia" x-model="tipoVigencia" required
-                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">
                                     <option value="general" @selected(old('tipo_vigencia', 'general') === 'general')>General (1 año calendario)</option>
                                     <option value="embarazo" @selected(old('tipo_vigencia') === 'embarazo')>Embarazo (hasta la fecha probable de parto)</option>
                                     <option value="escolar" @selected(old('tipo_vigencia') === 'escolar')>Escolar (hasta fin del período lectivo)</option>

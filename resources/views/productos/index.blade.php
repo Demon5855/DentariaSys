@@ -21,7 +21,7 @@
                     <a href="{{ route('productos.alertas') }}" class="px-4 py-2 border rounded-md text-sm hover:bg-gray-50">⚠ Alertas</a>
                     @can('gestionar', \App\Models\Producto::class)
                         <a href="{{ route('movimientos.crear-salida') }}" class="px-4 py-2 border rounded-md text-sm hover:bg-gray-50">Registrar salida</a>
-                        <a href="{{ route('productos.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm text-sm">
+                        <a href="{{ route('productos.create') }}" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-md shadow-sm text-sm">
                             + Nuevo producto
                         </a>
                     @endcan
@@ -45,7 +45,7 @@
                                 @php $stock = (int) ($producto->stock_actual ?? 0); @endphp
                                 <tr class="border-b hover:bg-gray-50">
                                     <td class="py-2">
-                                        <a href="{{ route('productos.show', $producto) }}" class="text-indigo-600 hover:underline">{{ $producto->nombre }}</a>
+                                        <a href="{{ route('productos.show', $producto) }}" class="text-brand-600 hover:underline">{{ $producto->nombre }}</a>
                                         @if ($producto->categoria)
                                             <span class="text-xs text-gray-400">({{ $producto->categoria }})</span>
                                         @endif

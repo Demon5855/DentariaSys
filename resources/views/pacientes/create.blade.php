@@ -28,7 +28,7 @@
                             <div>
                                 <x-input-label for="tipo_documento" :value="__('Tipo de documento')" />
                                 <select id="tipo_documento" name="tipo_documento" x-model="tipoDocumento" required
-                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">
                                     <option value="cedula" @selected(old('tipo_documento', 'cedula') === 'cedula')>Cédula</option>
                                     <option value="pasaporte" @selected(old('tipo_documento') === 'pasaporte')>Pasaporte</option>
                                     <option value="carnet_refugiado" @selected(old('tipo_documento') === 'carnet_refugiado')>Carné de refugiado</option>
@@ -72,7 +72,7 @@
                             <div>
                                 <x-input-label for="sexo" :value="__('Sexo')" />
                                 <select id="sexo" name="sexo" required
-                                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    class="block mt-1 w-full border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm">
                                     <option value="">Selecciona</option>
                                     <option value="H" @selected(old('sexo') === 'H')>Hombre</option>
                                     <option value="M" @selected(old('sexo') === 'M')>Mujer</option>

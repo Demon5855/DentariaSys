@@ -12,7 +12,7 @@
 
                     <div class="flex justify-between items-center mb-6">
                         <a href="{{ route('admin.users.create') }}"
-                            class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-md shadow-sm">
+                            class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-md shadow-sm">
                             + Nuevo usuario
                         </a>
                     </div>
@@ -47,14 +47,14 @@
                                     <td class="py-3 px-4">{{ $usuario->email }}</td>
                                     <td class="py-3 px-4">
                                         @foreach ($usuario->roles as $rol)
-                                            <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                            <span class="bg-brand-100 text-brand-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                                                 {{ $rol->name }}
                                             </span>
                                         @endforeach
                                     </td>
                                     <td class="py-3 px-4 text-center">
                                         <div class="flex justify-center space-x-2">
-                                            <a href="{{ route('admin.users.edit', $usuario) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
+                                            <a href="{{ route('admin.users.edit', $usuario) }}" class="text-brand-600 hover:text-brand-900">Editar</a>
                                             @if ($usuario->id !== auth()->id())
                                                 <form action="{{ route('admin.users.destroy', $usuario) }}" method="POST"
                                                     onsubmit="return confirm('¿Eliminar esta cuenta?');">

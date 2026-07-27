@@ -51,7 +51,7 @@
                                     class="absolute z-10 w-full bg-white border rounded-md shadow-lg mt-1 max-h-48 overflow-y-auto">
                                     <template x-for="resultado in resultados" :key="resultado.id">
                                         <li @click="seleccionar(resultado)"
-                                            class="px-3 py-2 text-sm hover:bg-indigo-50 cursor-pointer"
+                                            class="px-3 py-2 text-sm hover:bg-brand-50 cursor-pointer"
                                             x-text="resultado.texto"></li>
                                     </template>
                                 </ul>
