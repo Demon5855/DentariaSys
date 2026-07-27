@@ -232,4 +232,100 @@ class ConsultaTest extends TestCase
         $response->assertRedirect(route('historias.show', $historiaClinica));
         $this->assertDatabaseCount('diagnosticos', 0);
     }
+
+    public function test_guarda_tratamiento_con_proxima_cita(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+
+        $this->post(route('consultas.store', $historiaClinica), [
+            'fecha' => now()->toDateString(),
+            'motivo_consulta' => 'Caries pieza 36',
+            'tratamientos' => [
+                [
+                    'procedimiento' => 'Obturación con resina compuesta en pieza 36',
+                    'prescripciones' => 'Ibuprofeno 400mg vía oral cada 8 horas por 3 días',
+                    'estado' => 'en_tratamiento',
+                    'proxima_cita' => now()->addWeek()->toDateString(),
+                ],
+            ],
+        ]);
+
+        $consulta = $historiaClinica->consultas()->first();
+
+        $this->assertCount(1, $consulta->tratamientos);
+        $this->assertSame('en_tratamiento', $consulta->tratamientos->first()->estado);
+        $this->assertNotNull($consulta->tratamientos->first()->proxima_cita);
+    }
+
+    public function test_tratamiento_con_alta_no_requiere_proxima_cita(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+
+        $response = $this->post(route('consultas.store', $historiaClinica), [
+            'fecha' => now()->toDateString(),
+            'motivo_consulta' => 'Control final',
+            'tratamientos' => [
+                ['procedimiento' => 'Revisión final, tratamiento concluido', 'estado' => 'alta'],
+            ],
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $consulta = $historiaClinica->consultas()->first();
+        $this->assertSame('alta', $consulta->tratamientos->first()->estado);
+        $this->assertNull($consulta->tratamientos->first()->proxima_cita);
+    }
+
+    public function test_tratamiento_requiere_procedimiento(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+
+        $response = $this->post(route('consultas.store', $historiaClinica), [
+            'fecha' => now()->toDateString(),
+            'motivo_consulta' => 'Control',
+            'tratamientos' => [
+                ['estado' => 'en_tratamiento'], // sin 'procedimiento'
+            ],
+        ]);
+
+        $response->assertSessionHasErrors('tratamientos.0.procedimiento');
+        $this->assertDatabaseCount('tratamientos', 0);
+    }
+
+    public function test_proxima_cita_debe_ser_posterior_a_la_fecha_de_consulta(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+
+        $response = $this->post(route('consultas.store', $historiaClinica), [
+            'fecha' => now()->toDateString(),
+            'motivo_consulta' => 'Control',
+            'tratamientos' => [
+                [
+                    'procedimiento' => 'Limpieza',
+                    'estado' => 'en_tratamiento',
+                    'proxima_cita' => now()->subDay()->toDateString(), // en el pasado
+                ],
+            ],
+        ]);
+
+        $response->assertSessionHasErrors('tratamientos.0.proxima_cita');
+    }
+
+    public function test_registra_varios_tratamientos_en_la_misma_visita(): void
+    {
+        $historiaClinica = HistoriaClinica::factory()->create();
+
+        $this->post(route('consultas.store', $historiaClinica), [
+            'fecha' => now()->toDateString(),
+            'motivo_consulta' => 'Dos procedimientos',
+            'tratamientos' => [
+                ['procedimiento' => 'Extracción pieza 18', 'estado' => 'alta'],
+                ['procedimiento' => 'Sellante pieza 46', 'estado' => 'alta'],
+            ],
+        ]);
+
+        $consulta = $historiaClinica->consultas()->first();
+        $this->assertCount(2, $consulta->tratamientos);
+        $this->assertSame(0, $consulta->tratamientos[0]->orden);
+        $this->assertSame(1, $consulta->tratamientos[1]->orden);
+    }
 }
