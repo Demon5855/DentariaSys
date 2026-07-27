@@ -62,14 +62,26 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Usuario actualizado exitosamente.');
     }
 
+    /**
+     * "Eliminar" un usuario en realidad lo desactiva — nunca se borra la
+     * fila. Un borrado real dejaría huérfanas las referencias de
+     * consultas.profesional_id (nullOnDelete, pierde quién atendió) y
+     * fallaría directamente contra odontogramas.odontologo_id
+     * (restrictOnDelete), además de romper la trazabilidad médico-legal
+     * que exige el 033. La cuenta desactivada no puede iniciar sesión
+     * (ver LoginRequest::authenticate) pero su historial de auditoría y
+     * sus registros clínicos firmados permanecen intactos.
+     */
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {
-            return back()->withErrors(['user' => 'No puedes eliminar tu propia cuenta.']);
+            return back()->withErrors(['user' => 'No puedes desactivar tu propia cuenta.']);
         }
 
-        $user->delete();
+        $user->update(['activo' => ! $user->activo]);
 
-        return redirect()->route('admin.users.index')->with('status', 'Usuario eliminado.');
+        $mensaje = $user->activo ? 'Usuario reactivado.' : 'Usuario desactivado.';
+
+        return redirect()->route('admin.users.index')->with('status', $mensaje);
     }
 }

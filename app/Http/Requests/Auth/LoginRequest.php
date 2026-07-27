@@ -49,6 +49,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Una cuenta desactivada (ver Admin\UserController::destroy) no
+        // debe poder iniciar sesión, aunque la contraseña sea correcta.
+        if (! Auth::user()->activo) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Esta cuenta ha sido desactivada. Contacta a un administrador.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

@@ -1,18 +1,18 @@
 <section class="space-y-6">
     <header>
         <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Borrar Cuenta') }}
+            {{ __('Desactivar Cuenta') }}
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __('Una vez eliminada su cuenta, todos sus recursos y datos se eliminarán permanentemente. Antes de eliminar su cuenta, descargue cualquier dato o información que desee conservar.') }}
+            {{ __('Al desactivar tu cuenta no podrás iniciar sesión hasta que un administrador la reactive. Tus registros clínicos y tu historial de auditoría se conservan intactos — no se borra ningún dato.') }}
         </p>
     </header>
 
     <x-danger-button
         x-data=""
         x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-    >{{ __('Borrar Cuenta') }}</x-danger-button>
+    >{{ __('Desactivar Cuenta') }}</x-danger-button>
 
     <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
         <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
@@ -20,11 +20,11 @@
             @method('delete')
 
             <h2 class="text-lg font-medium text-gray-900">
-                {{ __('¿Estás seguro de que quieres eliminar tu cuenta?') }}
+                {{ __('¿Estás seguro de que quieres desactivar tu cuenta?') }}
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                {{ __('Una vez eliminada su cuenta, todos sus recursos y datos se eliminarán permanentemente. Ingrese su contraseña para confirmar que desea eliminar su cuenta permanentemente.') }}
+                {{ __('No podrás iniciar sesión hasta que un administrador reactive tu cuenta. Ingresa tu contraseña para confirmar.') }}
             </p>
 
             <div class="mt-6">
@@ -47,7 +47,7 @@
                 </x-secondary-button>
 
                 <x-danger-button class="ms-3">
-                    {{ __('Borrar Cuenta') }}
+                    {{ __("Desactivar Cuenta") }}
                 </x-danger-button>
             </div>
         </form>

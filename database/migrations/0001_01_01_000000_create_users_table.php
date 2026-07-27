@@ -18,6 +18,15 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+
+            // El personal nunca se borra de verdad: consultas.profesional_id,
+            // odontogramas.odontologo_id (restrictOnDelete) y las auditorías
+            // dependen de que el usuario siga existiendo para mantener la
+            // trazabilidad médico-legal. "Eliminar" a un usuario en este
+            // sistema significa desactivarlo (no puede iniciar sesión, ver
+            // Http/Requests/Auth/LoginRequest), nunca borrar la fila.
+            $table->boolean('activo')->default(true);
+
             $table->timestamps();
         });
 

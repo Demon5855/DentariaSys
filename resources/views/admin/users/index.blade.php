@@ -37,12 +37,13 @@
                                 <th class="py-3 px-4 text-left">Nombre</th>
                                 <th class="py-3 px-4 text-left">Correo</th>
                                 <th class="py-3 px-4 text-left">Rol</th>
+                                <th class="py-3 px-4 text-left">Estado</th>
                                 <th class="py-3 px-4 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($usuarios as $usuario)
-                                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                <tr class="border-b border-gray-200 hover:bg-gray-50 {{ ! $usuario->activo ? 'opacity-60' : '' }}">
                                     <td class="py-3 px-4 font-medium">{{ $usuario->name }}</td>
                                     <td class="py-3 px-4">{{ $usuario->email }}</td>
                                     <td class="py-3 px-4">
@@ -52,22 +53,31 @@
                                             </span>
                                         @endforeach
                                     </td>
+                                    <td class="py-3 px-4">
+                                        @if ($usuario->activo)
+                                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Activo</span>
+                                        @else
+                                            <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Desactivado</span>
+                                        @endif
+                                    </td>
                                     <td class="py-3 px-4 text-center">
                                         <div class="flex justify-center space-x-2">
                                             <a href="{{ route('admin.users.edit', $usuario) }}" class="text-brand-600 hover:text-brand-900">Editar</a>
                                             @if ($usuario->id !== auth()->id())
                                                 <form action="{{ route('admin.users.destroy', $usuario) }}" method="POST"
-                                                    onsubmit="return confirm('¿Eliminar esta cuenta?');">
+                                                    onsubmit="return confirm('{{ $usuario->activo ? '¿Desactivar esta cuenta? No podrá iniciar sesión, pero su historial se conserva.' : '¿Reactivar esta cuenta?' }}');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900">Eliminar</button>
+                                                    <button type="submit" class="{{ $usuario->activo ? 'text-red-600 hover:text-red-900' : 'text-brand-600 hover:text-brand-900' }}">
+                                                        {{ $usuario->activo ? 'Desactivar' : 'Reactivar' }}
+                                                    </button>
                                                 </form>
                                             @endif
                                         </div>
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="4" class="py-8 px-4 text-center text-gray-500">No hay usuarios registrados.</td></tr>
+                                <tr><td colspan="5" class="py-8 px-4 text-center text-gray-500">No hay usuarios registrados.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

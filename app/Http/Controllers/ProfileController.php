@@ -38,7 +38,10 @@ class ProfileController extends Controller
     }
 
     /**
-     * Delete the user's account.
+     * Desactiva la cuenta del propio usuario (nunca la borra). Un borrado
+     * real dejaría huérfanas las referencias de consultas/odontogramas
+     * firmados por este profesional — ver Admin\UserController::destroy
+     * para la misma regla aplicada por un administrador.
      */
     public function destroy(Request $request): RedirectResponse
     {
@@ -50,7 +53,7 @@ class ProfileController extends Controller
 
         Auth::logout();
 
-        $user->delete();
+        $user->update(['activo' => false]);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

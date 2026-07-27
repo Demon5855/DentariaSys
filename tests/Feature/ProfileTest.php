@@ -76,7 +76,11 @@ class ProfileTest extends TestCase
             ->assertRedirect('/');
 
         $this->assertGuest();
-        $this->assertNull($user->fresh());
+
+        // La cuenta se desactiva, nunca se borra — ver ProfileController::
+        // destroy(). El registro (y su historial de auditoría) permanece.
+        $this->assertNotNull($user->fresh());
+        $this->assertFalse($user->fresh()->activo);
     }
 
     public function test_correct_password_must_be_provided_to_delete_account(): void

@@ -51,4 +51,17 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_una_cuenta_desactivada_no_puede_iniciar_sesion(): void
+    {
+        $user = User::factory()->create(['activo' => false]);
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertSessionHasErrors('email');
+    }
 }

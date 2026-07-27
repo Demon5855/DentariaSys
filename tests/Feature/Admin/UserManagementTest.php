@@ -72,4 +72,21 @@ class UserManagementTest extends TestCase
         $response->assertSessionHasErrors('user');
         $this->assertDatabaseHas('users', ['id' => $admin->id]);
     }
+
+    public function test_un_admin_puede_desactivar_y_reactivar_a_otro_usuario(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+
+        $odontologo = User::factory()->create(['activo' => true]);
+        $odontologo->assignRole('odontologo');
+
+        // Primer toggle: desactivar. La fila NUNCA se borra.
+        $this->actingAs($admin)->delete(route('admin.users.destroy', $odontologo));
+        $this->assertDatabaseHas('users', ['id' => $odontologo->id, 'activo' => false]);
+
+        // Segundo toggle sobre el mismo registro: reactivar.
+        $this->actingAs($admin)->delete(route('admin.users.destroy', $odontologo));
+        $this->assertDatabaseHas('users', ['id' => $odontologo->id, 'activo' => true]);
+    }
 }
