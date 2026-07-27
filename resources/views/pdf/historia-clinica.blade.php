@@ -44,13 +44,16 @@
 </head>
 <body>
 
-<table class="membrete">
+<table class="membrete" style="margin-bottom: 10px;">
     <tr>
-        <td style="width:70%">
-            <div class="titulo">HISTORIA CLÍNICA ÚNICA — ODONTOLOGÍA</div>
-            <div class="subtitulo">SNS-MSP/HCU-form.033/2021</div>
+        <td style="width: 25%; text-align: left; vertical-align: middle;">
+            <img src="{{ public_path('images/logo_dentariasys_completo.png') }}" alt="Logo" style="width: 140px; height: auto;">
         </td>
-        <td class="codigo">
+        <td style="width: 50%; vertical-align: middle; padding-right: 15px;">
+            <div class="titulo" style="text-align: left;">HISTORIA CLÍNICA ÚNICA — ODONTOLOGÍA</div>
+            <div class="subtitulo" style="text-align: left;">SNS-MSP/HCU-form.033/2021</div>
+        </td>
+        <td class="codigo" style="width: 25%; vertical-align: middle;">
             Generado: {{ now()->format('d/m/Y H:i') }}<br>
             Historia N.° {{ $historiaClinica->id }}
         </td>
