@@ -65,6 +65,13 @@ class StoreConsultaRequest extends FormRequest
             'tratamientos.*.prescripciones' => ['nullable', 'string'],
             'tratamientos.*.proxima_cita' => ['nullable', 'date', 'after:fecha'],
             'tratamientos.*.estado' => ['required', 'in:en_tratamiento,alta'],
+
+            // Insumos consumidos por este tratamiento (opcional). El
+            // descuento real de stock (FIFO/FEFO) se hace en el
+            // controlador, no aquí — esto solo valida forma.
+            'tratamientos.*.productos' => ['nullable', 'array'],
+            'tratamientos.*.productos.*.producto_id' => ['required', 'integer', 'exists:productos,id'],
+            'tratamientos.*.productos.*.cantidad' => ['required', 'integer', 'min:1'],
         ];
     }
 

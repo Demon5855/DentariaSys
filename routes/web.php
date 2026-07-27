@@ -5,8 +5,11 @@ use App\Http\Controllers\CitaController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\HistoriaClinicaController;
 use App\Http\Controllers\HistoriaClinicaPdfController;
+use App\Http\Controllers\LoteController;
+use App\Http\Controllers\MovimientoStockController;
 use App\Http\Controllers\OdontogramaController;
 use App\Http\Controllers\PacienteController;
+use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +51,20 @@ Route::middleware('auth')->group(function () {
     Route::get('citas/{cita}/editar', [CitaController::class, 'edit'])->name('citas.edit');
     Route::put('citas/{cita}', [CitaController::class, 'update'])->name('citas.update');
     Route::patch('citas/{cita}/estado', [CitaController::class, 'cambiarEstado'])->name('citas.cambiar-estado');
+
+    // Rutas de Inventario
+    Route::get('inventario/alertas', [ProductoController::class, 'alertas'])->name('productos.alertas');
+    Route::get('inventario/buscar-por-codigo', [ProductoController::class, 'buscarPorCodigo'])->name('productos.buscar-por-codigo');
+    Route::get('inventario/salida', [MovimientoStockController::class, 'create'])->name('movimientos.crear-salida');
+    Route::post('inventario/salida', [MovimientoStockController::class, 'store'])->name('movimientos.guardar-salida');
+    Route::get('inventario/lotes/{lote}/merma', [LoteController::class, 'crearMerma'])->name('lotes.crear-merma');
+    Route::post('inventario/lotes/{lote}/merma', [LoteController::class, 'guardarMerma'])->name('lotes.guardar-merma');
+    Route::get('inventario/{producto}/lotes/crear', [LoteController::class, 'create'])->name('lotes.create');
+    Route::post('inventario/{producto}/lotes', [LoteController::class, 'store'])->name('lotes.store');
+    Route::resource('inventario', ProductoController::class)
+        ->parameters(['inventario' => 'producto'])
+        ->only(['index', 'create', 'store', 'show'])
+        ->names('productos');
 
     // Rutas de Consultas (cada visita, cuelga de la historia clínica)
     Route::get('historias/{historiaClinica}/consultas/crear', [ConsultaController::class, 'create'])->name('consultas.create');
