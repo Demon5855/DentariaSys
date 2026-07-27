@@ -25,6 +25,9 @@ class RoleSeeder extends Seeder
         'consultas.crear',
         'odontogramas.ver',
         'odontogramas.crear',
+        'citas.ver',
+        'citas.crear',
+        'citas.gestionar',
         'usuarios.gestionar',
     ];
 
@@ -32,7 +35,8 @@ class RoleSeeder extends Seeder
      * Quién puede hacer qué. El instructivo del Form 033 es explícito:
      * "este formulario debe ser llenado por profesionales odontólogos" —
      * por eso solo odontólogo/admin abren historias, registran consultas
-     * y firman odontogramas.
+     * y firman odontogramas. La agenda es distinta: es trabajo de
+     * recepción, no clínico, así que responde a otra lógica de permisos.
      */
     private const ROLES = [
         'admin' => self::PERMISOS, // todos
@@ -42,6 +46,7 @@ class RoleSeeder extends Seeder
             'historias.ver', 'historias.abrir',
             'consultas.ver', 'consultas.crear',
             'odontogramas.ver', 'odontogramas.crear',
+            'citas.ver', // ve su agenda, pero no la agenda ni la cancela
         ],
 
         // Ve el expediente clínico (apoyo en consulta, toma de signos vitales
@@ -51,12 +56,14 @@ class RoleSeeder extends Seeder
             'historias.ver',
             'consultas.ver',
             'odontogramas.ver',
+            'citas.ver',
         ],
 
-        // Front desk: administra el dato administrativo del paciente, sin
-        // acceso al contenido clínico.
+        // Front desk: administra el dato administrativo del paciente y la
+        // agenda completa, sin acceso al contenido clínico.
         'recepcion' => [
             'pacientes.ver', 'pacientes.crear', 'pacientes.editar', 'pacientes.desactivar',
+            'citas.ver', 'citas.crear', 'citas.gestionar',
         ],
     ];
 
