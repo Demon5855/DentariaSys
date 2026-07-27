@@ -55,7 +55,10 @@
         </td>
         <td class="codigo" style="width: 25%; vertical-align: middle;">
             Generado: {{ now()->format('d/m/Y H:i') }}<br>
-            Historia N.° {{ $historiaClinica->id }}
+            {{-- El "Número de Historia Clínica" del instructivo (bloque A) ES el
+                 número de documento del paciente, no el id autoincremental
+                 interno de esta tabla. --}}
+            Historia N.° {{ $paciente->numero_documento }}
         </td>
     </tr>
 </table>

@@ -50,7 +50,7 @@ class HistoriaClinicaPdfController extends Controller
 
         $tratamientos = $historiaClinica->consultas
             ->flatMap(fn ($consulta) => $consulta->tratamientos->map(fn ($t) => [
-                'fecha' => $consulta->fecha,
+                'fecha' => $t->fecha, // fecha propia de la sesión (Sección O), no la de la consulta
                 'tratamiento' => $t,
             ]))
             ->sortBy('fecha');

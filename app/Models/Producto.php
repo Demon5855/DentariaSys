@@ -30,9 +30,18 @@ class Producto extends Model implements Auditable
         return $this->hasMany(Lote::class);
     }
 
+    /**
+     * Suma solo lotes NO caducados — un lote vencido con cantidad_actual
+     * positiva ya no es stock disponible de verdad, aunque siga en la
+     * base de datos hasta que alguien registre su merma.
+     */
     protected function stockTotal(): Attribute
     {
-        return new Attribute(get: fn () => $this->lotes->sum('cantidad_actual'));
+        return new Attribute(
+            get: fn () => $this->lotes
+                ->filter(fn (Lote $l) => ! $l->esta_caducado)
+                ->sum('cantidad_actual')
+        );
     }
 
     public function scopeActivos(Builder $query): Builder
@@ -52,7 +61,8 @@ class Producto extends Model implements Auditable
     public function scopeBajoMinimo(Builder $query): Builder
     {
         return $query->activos()->whereRaw(
-            '(select coalesce(sum(cantidad_actual), 0) from lotes where lotes.producto_id = productos.id) < stock_minimo'
+            "(select coalesce(sum(cantidad_actual), 0) from lotes where lotes.producto_id = productos.id and lotes.fecha_caducidad >= ?) < stock_minimo",
+            [now()->toDateString()]
         );
     }
 
@@ -67,10 +77,17 @@ class Producto extends Model implements Auditable
      * dos veces — sin esto, dos usuarios registrando tratamientos al
      * mismo tiempo podrían dejar el stock en negativo.
      *
+     * IMPORTANTE: excluye lotes ya caducados. Antes de esta corrección, un
+     * lote vencido (por ser el que vence "más pronto") era literalmente
+     * el primero en la fila de FEFO — se consumía en tratamientos de
+     * pacientes reales sin ningún aviso. Un lote vencido con stock
+     * restante ya no cuenta ni para el descuento ni para el total
+     * disponible; hay que darlo de baja aparte (merma).
+     *
      * @return \Illuminate\Support\Collection<int, MovimientoStock>
      *
      * @throws StockInsuficienteException si no hay stock suficiente entre
-     *         todos los lotes vigentes.
+     *         todos los lotes vigentes (sin contar los caducados).
      */
     public function descontarStock(int $cantidad, array $contexto = []): \Illuminate\Support\Collection
     {
@@ -81,6 +98,7 @@ class Producto extends Model implements Auditable
         return DB::transaction(function () use ($cantidad, $contexto) {
             $lotes = $this->lotes()
                 ->where('cantidad_actual', '>', 0)
+                ->where('fecha_caducidad', '>=', now()->toDateString())
                 ->orderBy('fecha_caducidad')
                 ->lockForUpdate()
                 ->get();

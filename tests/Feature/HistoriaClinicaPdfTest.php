@@ -56,7 +56,7 @@ class HistoriaClinicaPdfTest extends TestCase
                 ['diagnostico_cie10_id' => $caries->id, 'descripcion' => 'Caries pieza 36', 'estado' => 'definitivo'],
             ],
             'tratamientos' => [
-                ['procedimiento' => 'Obturación pieza 36', 'estado' => 'alta'],
+                ['fecha' => now()->toDateString(), 'procedimiento' => 'Obturación pieza 36', 'estado' => 'alta'],
             ],
         ]);
 
