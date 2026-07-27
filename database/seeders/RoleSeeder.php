@@ -28,6 +28,8 @@ class RoleSeeder extends Seeder
         'citas.ver',
         'citas.crear',
         'citas.gestionar',
+        'inventario.ver',
+        'inventario.gestionar',
         'usuarios.gestionar',
     ];
 
@@ -47,6 +49,7 @@ class RoleSeeder extends Seeder
             'consultas.ver', 'consultas.crear',
             'odontogramas.ver', 'odontogramas.crear',
             'citas.ver', // ve su agenda, pero no la agenda ni la cancela
+            'inventario.ver', // consulta stock disponible al elegir insumos en un tratamiento
         ],
 
         // Ve el expediente clínico (apoyo en consulta, toma de signos vitales
@@ -57,13 +60,15 @@ class RoleSeeder extends Seeder
             'consultas.ver',
             'odontogramas.ver',
             'citas.ver',
+            'inventario.ver',
         ],
 
-        // Front desk: administra el dato administrativo del paciente y la
-        // agenda completa, sin acceso al contenido clínico.
+        // Front desk: administra el dato administrativo del paciente, la
+        // agenda completa y el inventario, sin acceso al contenido clínico.
         'recepcion' => [
             'pacientes.ver', 'pacientes.crear', 'pacientes.editar', 'pacientes.desactivar',
             'citas.ver', 'citas.crear', 'citas.gestionar',
+            'inventario.ver', 'inventario.gestionar',
         ],
     ];
 
