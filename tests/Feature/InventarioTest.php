@@ -232,6 +232,7 @@ class InventarioTest extends TestCase
             'motivo_consulta' => 'Control',
             'tratamientos' => [
                 [
+                    'fecha' => now()->toDateString(),
                     'procedimiento' => 'Obturación',
                     'estado' => 'alta',
                     'productos' => [
@@ -261,6 +262,7 @@ class InventarioTest extends TestCase
             'motivo_consulta' => 'Control',
             'tratamientos' => [
                 [
+                    'fecha' => now()->toDateString(),
                     'procedimiento' => 'Obturación',
                     'estado' => 'alta',
                     'productos' => [

@@ -242,6 +242,7 @@ class ConsultaTest extends TestCase
             'motivo_consulta' => 'Caries pieza 36',
             'tratamientos' => [
                 [
+                    'fecha' => now()->toDateString(),
                     'procedimiento' => 'Obturación con resina compuesta en pieza 36',
                     'prescripciones' => 'Ibuprofeno 400mg vía oral cada 8 horas por 3 días',
                     'estado' => 'en_tratamiento',
@@ -265,7 +266,7 @@ class ConsultaTest extends TestCase
             'fecha' => now()->toDateString(),
             'motivo_consulta' => 'Control final',
             'tratamientos' => [
-                ['procedimiento' => 'Revisión final, tratamiento concluido', 'estado' => 'alta'],
+                ['fecha' => now()->toDateString(), 'procedimiento' => 'Revisión final, tratamiento concluido', 'estado' => 'alta'],
             ],
         ]);
 
@@ -283,7 +284,7 @@ class ConsultaTest extends TestCase
             'fecha' => now()->toDateString(),
             'motivo_consulta' => 'Control',
             'tratamientos' => [
-                ['estado' => 'en_tratamiento'], // sin 'procedimiento'
+                ['fecha' => now()->toDateString(), 'estado' => 'en_tratamiento'], // sin 'procedimiento'
             ],
         ]);
 
@@ -300,6 +301,7 @@ class ConsultaTest extends TestCase
             'motivo_consulta' => 'Control',
             'tratamientos' => [
                 [
+                    'fecha' => now()->toDateString(),
                     'procedimiento' => 'Limpieza',
                     'estado' => 'en_tratamiento',
                     'proxima_cita' => now()->subDay()->toDateString(), // en el pasado
@@ -318,8 +320,8 @@ class ConsultaTest extends TestCase
             'fecha' => now()->toDateString(),
             'motivo_consulta' => 'Dos procedimientos',
             'tratamientos' => [
-                ['procedimiento' => 'Extracción pieza 18', 'estado' => 'alta'],
-                ['procedimiento' => 'Sellante pieza 46', 'estado' => 'alta'],
+                ['fecha' => now()->toDateString(), 'procedimiento' => 'Extracción pieza 18', 'estado' => 'alta'],
+                ['fecha' => now()->toDateString(), 'procedimiento' => 'Sellante pieza 46', 'estado' => 'alta'],
             ],
         ]);
 

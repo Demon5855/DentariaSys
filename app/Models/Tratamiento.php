@@ -16,6 +16,7 @@ class Tratamiento extends Model implements Auditable
     protected $fillable = [
         'consulta_id',
         'profesional_id',
+        'fecha',
         'diagnostico_complicaciones',
         'procedimiento',
         'prescripciones',
@@ -27,6 +28,7 @@ class Tratamiento extends Model implements Auditable
     protected function casts(): array
     {
         return [
+            'fecha' => 'date',
             'proxima_cita' => 'date',
         ];
     }

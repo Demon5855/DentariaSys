@@ -23,6 +23,7 @@
 
                     <form action="{{ route('consultas.store', $historiaClinica) }}" method="POST"
                         x-data="{
+                            fechaConsulta: {{ \Illuminate\Support\Js::from(old('fecha', now()->toDateString())) }},
                             diagnosticos: {{ old('diagnosticos') ? \Illuminate\Support\Js::from(old('diagnosticos')) : '[]' }},
                             tratamientos: {{ old('tratamientos') ? \Illuminate\Support\Js::from(old('tratamientos')) : '[]' }}
                         }">
@@ -32,7 +33,7 @@
                             <div>
                                 <x-input-label for="fecha" value="Fecha de la consulta" />
                                 <x-text-input id="fecha" class="block mt-1 w-full" type="date"
-                                    name="fecha" :value="old('fecha', now()->toDateString())" required />
+                                    name="fecha" x-model="fechaConsulta" required />
                                 <x-input-error :messages="$errors->get('fecha')" class="mt-2" />
                             </div>
 
@@ -201,7 +202,7 @@
                             <div>
                                 <div class="flex justify-between items-center mb-2">
                                     <x-input-label value="Tratamiento realizado en esta visita" />
-                                    <button type="button" @click="tratamientos.push({procedimiento: '', diagnostico_complicaciones: '', prescripciones: '', proxima_cita: '', estado: 'en_tratamiento', productos: []})"
+                                    <button type="button" @click="tratamientos.push({fecha: fechaConsulta, procedimiento: '', diagnostico_complicaciones: '', prescripciones: '', proxima_cita: '', estado: 'en_tratamiento', productos: []})"
                                         class="text-sm text-brand-600 hover:text-brand-900 font-medium">
                                         + Agregar tratamiento
                                     </button>
@@ -210,6 +211,11 @@
                                 <template x-for="(tratamiento, index) in tratamientos" :key="index">
                                     <div class="border rounded-md p-3 mb-3 bg-gray-50">
                                         <div>
+                                            <label class="text-xs text-gray-500">Fecha de esta sesión de tratamiento</label>
+                                            <input type="date" :name="`tratamientos[${index}][fecha]`" x-model="tratamiento.fecha" required
+                                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                        </div>
+                                        <div class="mt-2">
                                             <label class="text-xs text-gray-500">Diagnóstico / complicaciones (opcional)</label>
                                             <textarea :name="`tratamientos[${index}][diagnostico_complicaciones]`" x-model="tratamiento.diagnostico_complicaciones" rows="2"
                                                 class="block mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>

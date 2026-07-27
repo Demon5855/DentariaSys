@@ -103,6 +103,7 @@
                                         {{ $tratamiento->estado === 'alta' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
                                         {{ $tratamiento->estado === 'alta' ? 'ALTA' : 'En tratamiento' }}
                                     </span>
+                                    <span class="text-xs text-gray-500">{{ $tratamiento->fecha->format('d/m/Y') }}</span>
                                     @if ($tratamiento->proxima_cita)
                                         <span class="text-xs text-gray-500">Próxima cita: {{ $tratamiento->proxima_cita->format('d/m/Y') }}</span>
                                     @endif

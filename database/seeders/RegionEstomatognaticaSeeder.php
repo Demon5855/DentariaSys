@@ -8,11 +8,14 @@ use Illuminate\Database\Seeder;
 class RegionEstomatognaticaSeeder extends Seeder
 {
     /**
-     * Regiones tal como aparecen en la réplica del formulario 033 que
-     * armamos en la fase del formulario. El instructivo describe la
-     * metodología de examen para más puntos (cavidad oral, características
-     * de la saliva) que no incluí aquí como casillas independientes —
-     * pendiente de confirmar contra el formulario impreso.
+     * Lista completa según la metodología de examen del instructivo
+     * oficial (14 puntos, no 12). "Glándula parótida" queda como
+     * sub-punto de "Glándulas salivales" en el instructivo, no como
+     * región propia, así que no se agrega aparte. Sigue pendiente
+     * verificar contra el formulario impreso si estas 14 corresponden
+     * exactamente a las casillas dibujadas (ver pendientes-dentariasys.md,
+     * ítem C.9), pero la metodología de examen ya no deja ambigüedad
+     * sobre cuáles son los 14 puntos.
      */
     private const REGIONES = [
         1 => 'Labios',
@@ -24,9 +27,11 @@ class RegionEstomatognaticaSeeder extends Seeder
         7 => 'Piso de boca',
         8 => 'Carrillos',
         9 => 'Glándulas salivales',
-        10 => 'Oro faringe',
-        11 => 'Articulación témporo mandibular',
-        12 => 'Ganglios',
+        10 => 'Cavidad oral',
+        11 => 'Características de la saliva',
+        12 => 'Oro faringe',
+        13 => 'Articulación témporo mandibular',
+        14 => 'Ganglios',
     ];
 
     public function run(): void

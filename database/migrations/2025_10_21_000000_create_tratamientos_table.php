@@ -11,10 +11,14 @@ return new class extends Migration {
      * diagnóstico y/o la complicación, seguido el procedimiento a seguir,
      * las prescripciones y por último el código y firma."
      *
-     * No tiene columna 'fecha' propia: la fecha de la sesión es la de la
-     * consulta a la que pertenece — cada visita nueva ya es una consulta
-     * nueva en este sistema, así que una fecha de tratamiento aparte sería
-     * un dato redundante que podría desincronizarse.
+     * CORREGIDO tras revisar el instructivo oficial: sí lleva 'fecha'
+     * propia. El formulario impreso tiene una celda de fecha por cada FILA
+     * de tratamiento — el supuesto anterior ("una consulta = una fecha =
+     * una sesión de tratamiento") no se sostiene contra la fuente
+     * primaria. Sigue pendiente confirmar con el consultorio si en la
+     * práctica real registran más de una sesión de tratamiento bajo la
+     * misma consulta con fechas distintas (ver pendientes-dentariasys.md,
+     * ítem G.17), pero el campo ya no puede faltar en el esquema.
      *
      * "Una vez terminado el tratamiento se escribirá ALTA": por eso el
      * campo 'estado' en vez de forzar siempre una 'próxima cita'.
@@ -26,6 +30,7 @@ return new class extends Migration {
             $table->foreignId('consulta_id')->constrained('consultas')->cascadeOnDelete();
             $table->foreignId('profesional_id')->nullable()->constrained('users')->nullOnDelete();
 
+            $table->date('fecha');
             $table->text('diagnostico_complicaciones')->nullable();
             $table->text('procedimiento');
             $table->text('prescripciones')->nullable();

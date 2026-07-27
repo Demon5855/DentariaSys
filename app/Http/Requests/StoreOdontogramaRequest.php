@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Condicion;
 use App\Models\HistoriaClinica;
+use App\Models\Odontograma;
 use App\Models\SextanteIhos;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Foundation\Http\FormRequest;
@@ -97,6 +98,8 @@ class StoreOdontogramaRequest extends FormRequest
                 collect($this->input('hallazgos', []))->pluck('condicion_id')->filter()->unique()
             )->get()->keyBy('id');
 
+            $vistos = [];
+
             foreach ($this->input('hallazgos', []) as $indice => $hallazgo) {
                 $condicion = $condicionesPorId->get($hallazgo['condicion_id'] ?? null);
                 if (! $condicion) {
@@ -116,6 +119,32 @@ class StoreOdontogramaRequest extends FormRequest
                         "La condición \"{$condicion->nombre}\" no se marca por cara, es de pieza completa."
                     );
                 }
+
+                // El instructivo reserva sellantes, pérdida por otra causa,
+                // etc. a dientes definitivos ("Registrar... solo en
+                // dientes definitivos" — misma regla que movilidad y
+                // recesión). 'solo_definitivas' existía en el catálogo
+                // desde la fase 5 pero nunca se aplicaba.
+                if ($condicion->solo_definitivas
+                    && isset($hallazgo['pieza'])
+                    && ! Odontograma::esPiezaPermanente((int) $hallazgo['pieza'])
+                ) {
+                    $validator->errors()->add(
+                        "hallazgos.{$indice}.pieza",
+                        "La condición \"{$condicion->nombre}\" solo puede registrarse en dientes definitivos."
+                    );
+                }
+
+                // Evita duplicados exactos: la misma pieza + condición (y,
+                // si aplica, la misma cara) marcada más de una vez.
+                $clave = ($hallazgo['pieza'] ?? '') . '|' . ($hallazgo['condicion_id'] ?? '') . '|' . ($hallazgo['superficie'] ?? '');
+                if (isset($vistos[$clave])) {
+                    $validator->errors()->add(
+                        "hallazgos.{$indice}.condicion_id",
+                        'Esta combinación de pieza, condición y cara ya fue registrada.'
+                    );
+                }
+                $vistos[$clave] = true;
             }
 
             $historiaClinica = $this->route('historiaClinica');

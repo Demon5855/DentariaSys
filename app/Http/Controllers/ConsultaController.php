@@ -93,6 +93,7 @@ class ConsultaController extends Controller
                 foreach (array_values($tratamientos) as $posicion => $tratamiento) {
                     $registroTratamiento = $consulta->tratamientos()->create([
                         'profesional_id' => $request->user()?->id,
+                        'fecha' => $tratamiento['fecha'],
                         'diagnostico_complicaciones' => $tratamiento['diagnostico_complicaciones'] ?? null,
                         'procedimiento' => $tratamiento['procedimiento'],
                         'prescripciones' => $tratamiento['prescripciones'] ?? null,

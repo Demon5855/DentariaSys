@@ -59,7 +59,11 @@ class StoreConsultaRequest extends FormRequest
             'diagnosticos.*.estado' => ['required', 'in:presuntivo,definitivo'],
 
             // Sección O: uno o más tratamientos realizados en esta visita.
+            // Sección O del instructivo: cada sesión de tratamiento lleva
+            // su propia fecha (no hereda la de la consulta). No puede ser
+            // anterior a la fecha de esta consulta.
             'tratamientos' => ['nullable', 'array'],
+            'tratamientos.*.fecha' => ['required', 'date', 'after_or_equal:fecha', 'before_or_equal:today'],
             'tratamientos.*.diagnostico_complicaciones' => ['nullable', 'string'],
             'tratamientos.*.procedimiento' => ['required', 'string'],
             'tratamientos.*.prescripciones' => ['nullable', 'string'],
