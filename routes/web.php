@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CitaController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\HistoriaClinicaController;
 use App\Http\Controllers\HistoriaClinicaPdfController;
@@ -38,6 +39,15 @@ Route::middleware('auth')->group(function () {
     Route::post('pacientes/{paciente}/historia', [HistoriaClinicaController::class, 'store'])->name('historias.store');
     Route::get('historias/{historiaClinica}', [HistoriaClinicaController::class, 'show'])->name('historias.show');
     Route::get('historias/{historiaClinica}/pdf', [HistoriaClinicaPdfController::class, 'exportar'])->name('historias.pdf');
+
+    // Rutas de Agenda / Citas
+    Route::get('citas', [CitaController::class, 'index'])->name('citas.index');
+    Route::get('citas/crear', [CitaController::class, 'create'])->name('citas.create');
+    Route::post('citas', [CitaController::class, 'store'])->name('citas.store');
+    Route::get('citas/buscar-pacientes', [CitaController::class, 'buscarPacientes'])->name('citas.buscar-pacientes');
+    Route::get('citas/{cita}/editar', [CitaController::class, 'edit'])->name('citas.edit');
+    Route::put('citas/{cita}', [CitaController::class, 'update'])->name('citas.update');
+    Route::patch('citas/{cita}/estado', [CitaController::class, 'cambiarEstado'])->name('citas.cambiar-estado');
 
     // Rutas de Consultas (cada visita, cuelga de la historia clínica)
     Route::get('historias/{historiaClinica}/consultas/crear', [ConsultaController::class, 'create'])->name('consultas.create');
