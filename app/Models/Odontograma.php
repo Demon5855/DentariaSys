@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use OwenIt\Auditing\Auditable as AuditingTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Odontograma extends Model
+class Odontograma extends Model implements Auditable
 {
-    use HasFactory;
+    use HasFactory, AuditingTrait;
 
     /** FDI: terceros molares, excluidos del CPO-D cuando la causa es prótesis total. */
     private const TERCEROS_MOLARES = [18, 28, 38, 48];
@@ -38,6 +40,34 @@ class Odontograma extends Model
             'ihos_calculo_promedio' => 'decimal:2',
             'ihos_gingivitis_promedio' => 'decimal:2',
         ];
+    }
+
+    /**
+     * Guarda de inmutabilidad a nivel de modelo. El instructivo es
+     * explícito: "una vez registrado el odontograma no podrá ser
+     * alterado (repintados, tachado, aumentado)". Hasta ahora esto solo
+     * se cumplía porque no existe ruta de 'update' — una garantía de
+     * convención, no del modelo. Aquí se bloquea cualquier UPDATE que no
+     * venga de la propia transacción de creación (OdontogramaController::
+     * store() sí necesita actualizar los índices cpod, ceod e ihos una
+     * vez calculados, y eso sigue funcionando porque `wasRecentlyCreated`
+     * permanece true durante esa misma request).
+     * También se bloquea el borrado por completo: no existe caso de
+     * negocio para borrar un documento médico-legal firmado.
+     */
+    protected static function booted(): void
+    {
+        static::updating(function (self $odontograma) {
+            if (! $odontograma->wasRecentlyCreated) {
+                throw new \RuntimeException(
+                    'Un odontograma firmado no puede modificarse. Registra uno nuevo de tipo "evolutivo" para corregir.'
+                );
+            }
+        });
+
+        static::deleting(function () {
+            throw new \RuntimeException('Un odontograma firmado no puede eliminarse.');
+        });
     }
 
     public function historiaClinica(): BelongsTo
