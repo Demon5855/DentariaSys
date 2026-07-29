@@ -21,3 +21,25 @@
         font-family: 'Inter', sans-serif;
     }
 }
+
+/* Selector de fecha (flatpickr) con los colores de marca — ver resources/js/app.js */
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+    background: #3B8E87;
+    border-color: #3B8E87;
+}
+
+.flatpickr-day.today {
+    border-color: #3B8E87;
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-weekdays,
+span.flatpickr-weekday {
+    background: #eef7f6;
+}
+
+.flatpickr-day:hover {
+    background: #d4edec;
+}
