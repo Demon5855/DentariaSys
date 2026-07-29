@@ -36,7 +36,14 @@ return new class extends Migration {
             $table->string('email')->unique()->nullable();
 
             // Representante legal: obligatorio en el formulario solo cuando
-            // el paciente es menor de edad (ver StorePacienteRequest).
+            // el paciente es menor de edad (ver StorePacienteRequest). Su
+            // tipo de documento es un catálogo más corto que el del
+            // paciente: sin 'temporal', porque ese código de 17 dígitos es
+            // el sustituto del Número de Historia Clínica del PACIENTE
+            // (lo emite estadística para identificar SU expediente) — un
+            // representante no tiene expediente propio, así que no aplica;
+            // se le exige un documento real (cédula, pasaporte o carné).
+            $table->enum('representante_tipo_documento', ['cedula', 'pasaporte', 'carnet_refugiado'])->nullable();
             $table->string('representante_nombre')->nullable();
             $table->string('representante_documento', 20)->nullable();
             $table->string('representante_parentesco', 50)->nullable();

@@ -112,6 +112,16 @@
                                     <x-input-error :messages="$errors->get('representante_nombre')" class="mt-2" />
                                 </div>
                                 <div>
+                                    <x-input-label for="representante_tipo_documento" :value="__('Tipo de documento')" />
+                                    <select id="representante_tipo_documento" name="representante_tipo_documento"
+                                        class="border-gray-300 focus:border-brand-500 focus:ring-brand-500 rounded-md shadow-sm block mt-1 w-full">
+                                        <option value="cedula" @selected(old('representante_tipo_documento', $paciente->representante_tipo_documento ?? 'cedula') === 'cedula')>Cédula</option>
+                                        <option value="pasaporte" @selected(old('representante_tipo_documento', $paciente->representante_tipo_documento) === 'pasaporte')>Pasaporte</option>
+                                        <option value="carnet_refugiado" @selected(old('representante_tipo_documento', $paciente->representante_tipo_documento) === 'carnet_refugiado')>Carné de refugiado</option>
+                                    </select>
+                                    <x-input-error :messages="$errors->get('representante_tipo_documento')" class="mt-2" />
+                                </div>
+                                <div>
                                     <x-input-label for="representante_documento" :value="__('Documento de identidad')" />
                                     <x-text-input id="representante_documento" class="block mt-1 w-full" type="text" name="representante_documento" :value="old('representante_documento', $paciente->representante_documento)" />
                                     <x-input-error :messages="$errors->get('representante_documento')" class="mt-2" />

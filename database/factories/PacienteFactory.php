@@ -70,6 +70,7 @@ class PacienteFactory extends Factory
         return $this->state(fn () => [
             'fecha_nacimiento' => fake()->dateTimeBetween('-17 years', '-1 years')->format('Y-m-d'),
             'representante_nombre' => fake()->name(),
+            'representante_tipo_documento' => 'cedula',
             'representante_documento' => $this->cedulaValida(),
             'representante_parentesco' => fake()->randomElement(['Madre', 'Padre', 'Tutor legal']),
             'representante_telefono' => fake()->numerify('09########'),

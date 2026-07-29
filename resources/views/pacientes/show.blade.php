@@ -70,7 +70,12 @@
                                 </div>
                                 <div>
                                     <dt class="text-gray-500">Documento</dt>
-                                    <dd class="font-medium">{{ $paciente->representante_documento ?? '—' }}</dd>
+                                    <dd class="font-medium">
+                                        {{ $paciente->representante_documento ?? '—' }}
+                                        @if ($paciente->representante_tipo_documento)
+                                            <span class="text-gray-400 text-xs">({{ ucfirst(str_replace('_', ' ', $paciente->representante_tipo_documento)) }})</span>
+                                        @endif
+                                    </dd>
                                 </div>
                                 <div>
                                     <dt class="text-gray-500">Parentesco</dt>

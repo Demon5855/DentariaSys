@@ -28,6 +28,7 @@ class Paciente extends Model implements Auditable
         'direccion',
         'email',
         'representante_nombre',
+        'representante_tipo_documento',
         'representante_documento',
         'representante_parentesco',
         'representante_telefono',
